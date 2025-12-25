@@ -1,4 +1,5 @@
 package services;
+
 import exceptions.AccountNotFoundException;
 import exceptions.ViewAccountException;
 import models.Account;
@@ -6,67 +7,74 @@ import utils.InputReader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class AccountManager {
-   private ArrayList<Account>accounts = new ArrayList<>();
-    private Map<String, Account> accountMap = new HashMap<>();
-    private int accountCount;
+    private final Map<String, Account> accountMap = new HashMap<>();
 
     // Constructor
     public AccountManager() {
-        this.accounts = new Account[50];  // capacity
-        this.accountCount = 0;
+        // HashMap handles capacity automatically
     }
 
-    // add account method
+    // Add account method - now uses HashMap for O(1) lookups
     public void addAccount(Account account) {
-        if (accountCount < accounts.length) {
-            accounts[accountCount] = account;
-            accountCount++;
-        } else {
-            System.out.println("Account list is full.");
-        }
+        accountMap.put(account.getAccountNumber(), account);
     }
 
-    //------------------ finding account method----------------
+    // Finding account method - using HashMap for instant lookup
     public Account findAccount(String accountNumber) throws AccountNotFoundException {
-        // Loop through all Test.accounts in the manager
-        for (int i = 0; i < accountCount; i++) {
-            if (accounts[i].getAccountNumber().equals(accountNumber)) {
-                return accounts[i];
-            }
-        }
-        // If no account matches, throw exception
-        throw new AccountNotFoundException("Account not found: " + accountNumber);
+        return Optional.ofNullable(accountMap.get(accountNumber))
+                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountNumber));
     }
 
-    // view all Test.accounts
+    // View all accounts - using Stream for cleaner iteration
     public void viewAllAccounts(InputReader inputReader) throws ViewAccountException {
-        if (accountCount == 0) {
-            throw new ViewAccountException(); // Throw exception instead of printing
+        if (accountMap.isEmpty()) {
+            throw new ViewAccountException();
         }
 
-        for (int i = 0; i < accountCount; i++) {
-            accounts[i].displayAccountDetails();
+        accountMap.values().forEach(account -> {
+            account.displayAccountDetails();
             System.out.println("--------------------------------");
-        }
+        });
+
         inputReader.waitForEnter();
     }
 
-    // sum of all balances
+    // Sum of all balances - using Stream reduction
     public double getTotalBalance() {
-        double total = 0;
-
-        for (int i = 0; i < accountCount; i++) {
-            total += accounts[i].getBalance();
-        }
-
-        return total;
+        return accountMap.values().stream()
+                .mapToDouble(Account::getBalance)
+                .sum();
     }
 
-    // number of Test.accounts
+    // Number of accounts
     public int getAccountCount() {
-        return accountCount;
+        return accountMap.size();
+    }
+
+    // Bonus: Get all accounts as a list (if needed elsewhere)
+    public List<Account> getAllAccounts() {
+        return new ArrayList<>(accountMap.values());
+    }
+
+    // Bonus: Check if account exists
+    public boolean accountExists(String accountNumber) {
+        return accountMap.containsKey(accountNumber);
+    }
+
+    // Bonus: Remove account
+    public boolean removeAccount(String accountNumber) {
+        return accountMap.remove(accountNumber) != null;
+    }
+
+    // Bonus: Get accounts filtered by minimum balance
+    public List<Account> getAccountsAboveBalance(double minBalance) {
+        return accountMap.values().stream()
+                .filter(account -> account.getBalance() >= minBalance)
+                .toList();
     }
 }

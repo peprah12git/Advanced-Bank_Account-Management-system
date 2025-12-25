@@ -7,7 +7,7 @@ import utils.TablePrinter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /** Manages a collection of transactions using ArrayList and Streams. */
 public class TransactionManager {
@@ -34,11 +34,7 @@ public class TransactionManager {
 
     /** Calculates total deposits for a specific account. */
     public double calculateTotalDepositsForAccount(String accountNumber) {
-        return transactions.stream()
-                .filter(t -> t.getAccountNumber().equals(accountNumber))
-                .filter(t -> t.getType().equalsIgnoreCase(DEPOSIT_TYPE))
-                .mapToDouble(Transaction::getAmount)
-                .sum();
+        return calculateTotalByTypeForAccount(accountNumber, DEPOSIT_TYPE);
     }
 
     /** Calculates total withdrawals for a specific account. */
@@ -68,10 +64,7 @@ public class TransactionManager {
             return;
         }
 
-        String[] headers = createTransactionHeaders();
-        String[][] data = buildTransactionData(transactions);
-
-        printer.printTable(headers, data);
+        displayTransactionTable(transactions);
         displayTransactionSummary(
                 transactions.size(),
                 calculateTotalDeposits(),
@@ -89,9 +82,7 @@ public class TransactionManager {
             return;
         }
 
-        List<Transaction> accountTransactions = transactions.stream()
-                .filter(t -> t.getAccountNumber().equals(accountNumber))
-                .collect(Collectors.toList());
+        List<Transaction> accountTransactions = getTransactionsForAccount(accountNumber);
 
         if (accountTransactions.isEmpty()) {
             System.out.println("No transactions recorded for account: " + accountNumber);
@@ -99,10 +90,7 @@ public class TransactionManager {
             return;
         }
 
-        String[] headers = createTransactionHeaders();
-        String[][] data = buildTransactionData(accountTransactions);
-
-        printer.printTable(headers, data);
+        displayTransactionTable(accountTransactions);
 
         double totalDeposits = calculateTotalDepositsForAccount(accountNumber);
         double totalWithdrawals = calculateTotalWithdrawalsForAccount(accountNumber);
@@ -119,7 +107,7 @@ public class TransactionManager {
     public List<Transaction> getTransactionsForAccount(String accountNumber) {
         return transactions.stream()
                 .filter(t -> t.getAccountNumber().equals(accountNumber))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // ==================== HELPER METHODS ====================
@@ -133,10 +121,16 @@ public class TransactionManager {
 
     private double calculateTotalByTypeForAccount(String accountNumber, String type) {
         return transactions.stream()
-                .filter(t -> t.getAccountNumber().equals(accountNumber))
-                .filter(t -> t.getType().equalsIgnoreCase(type))
+                .filter(t -> t.getAccountNumber().equals(accountNumber) &&
+                        t.getType().equalsIgnoreCase(type))
                 .mapToDouble(Transaction::getAmount)
                 .sum();
+    }
+
+    private void displayTransactionTable(List<Transaction> transactionList) {
+        String[] headers = createTransactionHeaders();
+        String[][] data = buildTransactionData(transactionList);
+        printer.printTable(headers, data);
     }
 
     private String[] createTransactionHeaders() {
@@ -144,17 +138,19 @@ public class TransactionManager {
     }
 
     private String[][] buildTransactionData(List<Transaction> transactionList) {
-        String[][] data = new String[transactionList.size()][5];
+        return IntStream.range(0, transactionList.size())
+                .mapToObj(i -> buildTransactionRow(transactionList.get(i)))
+                .toArray(String[][]::new);
+    }
 
-        for (int i = 0; i < transactionList.size(); i++) {
-            Transaction tx = transactionList.get(i);
-            data[i][0] = tx.getTransactionId();
-            data[i][1] = tx.getAccountNumber();
-            data[i][2] = tx.getType().toUpperCase();
-            data[i][3] = formatAmount(tx.getType(), tx.getAmount());
-            data[i][4] = tx.getTimestamp();
-        }
-        return data;
+    private String[] buildTransactionRow(Transaction tx) {
+        return new String[]{
+                tx.getTransactionId(),
+                tx.getAccountNumber(),
+                tx.getType().toUpperCase(),
+                formatAmount(tx.getType(), tx.getAmount()),
+                tx.getTimestamp()
+        };
     }
 
     private String formatAmount(String type, double amount) {
