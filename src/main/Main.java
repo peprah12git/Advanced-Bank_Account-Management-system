@@ -184,6 +184,10 @@ public class Main {
             InputReader inputReader) {
 
         System.out.println("\n+---------------------+\n| PROCESS TRANSACTION |\n+---------------------+");
+//        if (!InputValidator.isValidAccountNumber(accountNumber)) {
+//            System.out.println("Invalid account number. Format: ACC123");
+//            return;
+//        }
         String accountNumber = inputReader.readString("\nEnter Account number: ");
 
         try {
@@ -392,9 +396,9 @@ public class Main {
         System.out.println("✓ Statement generated successfully.");
     }
 
-    // ========================================
-    // TEST RUNNER
-    // ========================================
+    /*
+    TEST RUNNER
+     */
 
     private static void runTests(InputReader inputReader) {
         System.out.println("Running tests with JUnit...");

@@ -5,18 +5,44 @@ import exceptions.ViewAccountException;
 import models.Account;
 import utils.InputReader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AccountManager {
     private ArrayList<Account> accounts;
     private Map<String, Account> accountMap;
+    private FilePersistenceService persistenceService;
 
     // Constructor
     public AccountManager() {
         this.accounts = new ArrayList<>();
         this.accountMap = new HashMap<>();
+        this.persistenceService = new FilePersistenceService();
+
+        // Load accounts on startup
+        loadAccountsOnStartup();
+    }
+
+    /**
+     * Loads accounts from file on startup.
+     */
+    private void loadAccountsOnStartup() {
+        try {
+            List<Account> loadedAccounts = persistenceService.loadAccountsFromFile();
+
+            // Add each loaded account to both data structures
+            for (Account account : loadedAccounts) {
+                accounts.add(account);
+                accountMap.put(account.getAccountNumber(), account);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error loading accounts from file: " + e.getMessage());
+            System.out.println("Starting with empty account list.");
+        }
     }
 
     // add account method
@@ -97,5 +123,27 @@ public class AccountManager {
     // Get all accounts as list
     public ArrayList<Account> getAllAccounts() {
         return new ArrayList<>(accounts);
+    }
+
+    /**
+     * Saves all accounts to file.
+     * Call this method on application exit.
+     */
+    public void saveAccountsToFile() {
+        try {
+            persistenceService.saveAccountsToFile(accounts);
+        } catch (IOException e) {
+            System.err.println("Error saving accounts to file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Reloads accounts from file.
+     * Useful for refreshing data.
+     */
+    public void reloadAccountsFromFile() {
+        accounts.clear();
+        accountMap.clear();
+        loadAccountsOnStartup();
     }
 }
