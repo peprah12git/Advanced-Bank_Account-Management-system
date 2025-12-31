@@ -5,6 +5,9 @@ import models.Customer;
 import models.SavingsAccount;
 import models.CheckingAccount;
 import models.PremiumCustomer;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,20 +15,23 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service for file persistence operations.
- * Handles saving and loading account data from files.
+ * US-2.1: Save Accounts to File - Write account data to accounts.txt on exit.
+ * US-2.2: Load Accounts on Startup - Read data using Files.lines() and map each line to an object using method references.
  */
 public class FilePersistenceService {
 
     private static final String ACCOUNTS_FILE = "accounts.txt";
     private static final String DELIMITER = ",";
+    private static final int EXPECTED_FIELD_COUNT = 10;
 
     /**
-     * Saves all accounts to accounts.txt file.
-     * Format: accountNumber,customerName,customerId,customerAge,customerContact,customerAddress,customerType,balance,status,accountType
+     * US-2.1: Saves all accounts to accounts.txt file on exit.
+     * Uses BufferedWriter for efficient writing.
+     * Format: accountNumber,customerName,customerId,customerAge,customerContact,
+     *         customerAddress,customerType,balance,status,accountType
      *
      * @param accounts list of accounts to save
      * @throws IOException if file writing fails
@@ -33,21 +39,23 @@ public class FilePersistenceService {
     public void saveAccountsToFile(List<Account> accounts) throws IOException {
         Path filePath = Paths.get(ACCOUNTS_FILE);
 
-        // Convert accounts to CSV lines using Streams and method references
-        List<String> lines = accounts.stream()
-                .map(this::accountToCSV)
-                .collect(Collectors.toList());
-
-        // Write all lines to file (overwrites existing file)
-        Files.write(filePath, lines,
+        try (BufferedWriter writer = Files.newBufferedWriter(filePath,
                 StandardOpenOption.CREATE,
-                StandardOpenOption.TRUNCATE_EXISTING);
+                StandardOpenOption.TRUNCATE_EXISTING)) {
 
-        System.out.println("Successfully saved " + accounts.size() + " accounts to " + ACCOUNTS_FILE);
+            for (Account account : accounts) {
+                String csvLine = accountToCSV(account);
+                writer.write(csvLine);
+                writer.newLine();
+            }
+
+            System.out.println("Successfully saved " + accounts.size() + " accounts to " + ACCOUNTS_FILE);
+        }
     }
 
     /**
-     * Loads accounts from accounts.txt file on startup.
+     * US-2.2: Loads accounts from accounts.txt file on startup.
+     * Uses Files.lines() and maps each line to an object using method references.
      *
      * @return list of loaded accounts
      * @throws IOException if file reading fails
@@ -55,18 +63,17 @@ public class FilePersistenceService {
     public List<Account> loadAccountsFromFile() throws IOException {
         Path filePath = Paths.get(ACCOUNTS_FILE);
 
-        // Check if file exists
         if (!Files.exists(filePath)) {
             System.out.println("No existing accounts file found. Starting fresh.");
             return new ArrayList<>();
         }
 
-        // Read all lines and map each to an Account object using method reference
+        // US-2.2: Using Files.lines() and method reference to map lines to objects
         List<Account> accounts = Files.lines(filePath)
                 .filter(line -> !line.trim().isEmpty())
-                .map(this::csvToAccount)
-                .filter(account -> account != null)  // Filter out any parsing errors
-                .collect(Collectors.toList());
+                .map(this::csvToAccount)  // Method reference for mapping
+                .filter(account -> account != null)
+                .toList();  // or .collect(Collectors.toList()) for older Java
 
         System.out.println("Successfully loaded " + accounts.size() + " accounts from " + ACCOUNTS_FILE);
         return accounts;
@@ -74,7 +81,6 @@ public class FilePersistenceService {
 
     /**
      * Converts an Account object to CSV string format.
-     * Format: accountNumber,customerName,customerId,customerAge,customerContact,customerAddress,customerType,balance,status,accountType
      *
      * @param account the account to convert
      * @return CSV formatted string
@@ -83,19 +89,19 @@ public class FilePersistenceService {
         Customer customer = account.getCustomer();
         return String.join(DELIMITER,
                 account.getAccountNumber(),
-                customer.getName(),
+                escapeCsvField(customer.getName()),
                 customer.getCustomerId(),
                 String.valueOf(customer.getAge()),
-                customer.getContact(),
-                customer.getAddress(),
+                escapeCsvField(customer.getContact()),
+                escapeCsvField(customer.getAddress()),
                 customer.getCustomerType(),
-                String.valueOf(account.getBalance()),
+                String.format("%.2f", account.getBalance()),
                 account.getStatus(),
                 account.getAccountType());
     }
 
     /**
-     * Converts a CSV line to an Account object.
+     * Converts a CSV line to an Account object (method for mapping).
      *
      * @param line CSV formatted string
      * @return Account object or null if parsing fails
@@ -104,8 +110,8 @@ public class FilePersistenceService {
         try {
             String[] parts = line.split(DELIMITER);
 
-            if (parts.length < 10) {
-                System.err.println("Invalid line format: " + line);
+            if (parts.length < EXPECTED_FIELD_COUNT) {
+                System.err.println("Invalid line format (expected " + EXPECTED_FIELD_COUNT + " fields): " + line);
                 return null;
             }
 
@@ -120,18 +126,21 @@ public class FilePersistenceService {
             String status = parts[8].trim();
             String accountType = parts[9].trim();
 
-            // Create Customer object based on customer type
-            Customer customer = createCustomerByType(customerName, customerAge,
-                    customerContact, customerAddress, customerType);
+            // Create Customer object
+            Customer customer = createCustomerByType(
+                    customerName, customerAge, customerContact, customerAddress, customerType);
 
             if (customer == null) {
-                System.err.println("Failed to create customer for line: " + line);
+                System.err.println("Failed to create customer from line: " + line);
                 return null;
             }
 
-            // Create appropriate account type based on the saved type
+            // Create Account object
             return createAccountByType(customer, balance, status, accountType);
 
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid number format in line: " + line);
+            return null;
         } catch (Exception e) {
             System.err.println("Error parsing line: " + line + " - " + e.getMessage());
             return null;
@@ -140,79 +149,66 @@ public class FilePersistenceService {
 
     /**
      * Factory method to create the appropriate Customer subclass.
-     *
-     * @param name customer name
-     * @param age customer age
-     * @param contact customer contact
-     * @param address customer address
-     * @param customerType type of customer (Premium, Regular, etc.)
-     * @return appropriate Customer subclass instance
      */
     private Customer createCustomerByType(String name, int age, String contact,
                                           String address, String customerType) {
-        Customer customer = null;
-
         switch (customerType) {
             case "Premium":
             case "PremiumCustomer":
-                customer = new PremiumCustomer(name, age, contact, address);
-                break;
+                return new PremiumCustomer(name, age, contact, address);
+
             case "Regular":
             case "RegularCustomer":
-                // TODO: Add RegularCustomer when available
-                // customer = new RegularCustomer(name, age, contact, address);
-                System.err.println("RegularCustomer not yet implemented. Using PremiumCustomer as default.");
-                customer = new PremiumCustomer(name, age, contact, address);
-                break;
-            default:
-                System.err.println("Unknown customer type: " + customerType + ". Defaulting to PremiumCustomer.");
-                customer = new PremiumCustomer(name, age, contact, address);
-                break;
-        }
+                // TODO: Implement RegularCustomer class
+                System.err.println("RegularCustomer not implemented. Using PremiumCustomer.");
+                return new PremiumCustomer(name, age, contact, address);
 
-        return customer;
+            default:
+                System.err.println("Unknown customer type: " + customerType + ". Using PremiumCustomer.");
+                return new PremiumCustomer(name, age, contact, address);
+        }
     }
 
     /**
      * Factory method to create the appropriate Account subclass.
-     *
-     * @param customer the customer object
-     * @param balance account balance
-     * @param status account status
-     * @param accountType type of account (Savings, Checking, etc.)
-     * @return appropriate Account subclass instance
      */
     private Account createAccountByType(Customer customer, double balance,
                                         String status, String accountType) {
-        Account account = null;
+        Account account;
 
         switch (accountType) {
             case "Savings":
             case "SavingsAccount":
                 account = new SavingsAccount(customer, balance);
                 break;
+
             case "Checking":
             case "CheckingAccount":
                 account = new CheckingAccount(customer, balance);
                 break;
+
             default:
-                System.err.println("Unknown account type: " + accountType + ". Defaulting to SavingsAccount.");
+                System.err.println("Unknown account type: " + accountType + ". Using SavingsAccount.");
                 account = new SavingsAccount(customer, balance);
                 break;
         }
 
-        // Set status if account was created
-        if (account != null) {
-            account.setStatus(status);
-        }
-
+        account.setStatus(status);
         return account;
     }
 
     /**
+     * Escapes CSV field if it contains comma or special characters.
+     */
+    private String escapeCsvField(String field) {
+        if (field.contains(DELIMITER)) {
+            return "\"" + field.replace("\"", "\"\"") + "\"";
+        }
+        return field;
+    }
+
+    /**
      * Checks if accounts file exists.
-     *
-     * @return true if file exists, false otherwise
      */
     public boolean accountsFileExists() {
         return Files.exists(Paths.get(ACCOUNTS_FILE));
@@ -220,24 +216,12 @@ public class FilePersistenceService {
 
     /**
      * Deletes the accounts file.
-     * Useful for testing or reset functionality.
-     *
-     * @throws IOException if deletion fails
      */
     public void deleteAccountsFile() throws IOException {
         Path filePath = Paths.get(ACCOUNTS_FILE);
         if (Files.exists(filePath)) {
             Files.delete(filePath);
-            System.out.println("Accounts file deleted.");
+            System.out.println("Accounts file deleted successfully.");
         }
-    }
-
-    /**
-     * Gets the accounts file path.
-     *
-     * @return the file path as a string
-     */
-    public String getAccountsFilePath() {
-        return ACCOUNTS_FILE;
     }
 }

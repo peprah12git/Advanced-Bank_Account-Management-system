@@ -2,6 +2,7 @@ package models;
 
 import exceptions.InsufficientFundsException;
 import exceptions.InvalidAmountException;
+import utils.ValidationUtils;
 
 public abstract class Account {
     private String accountNumber;
@@ -64,10 +65,14 @@ public abstract class Account {
      * @param amount
      * @throws InvalidAmountException
      */
+    // In Account.java
     public void deposit(double amount) throws InvalidAmountException {
-        if (amount <= 0) {
-            throw new InvalidAmountException("Deposit amount can not be zero");
-        } this.balance+=amount;
+        try {
+            ValidationUtils.validateAmount(amount, "Deposit");
+        } catch (IllegalArgumentException e) {
+            throw new InvalidAmountException(e.getMessage());
+        }
+        this.balance += amount;
     }
 
     /**

@@ -4,6 +4,7 @@ import exceptions.AccountNotFoundException;
 import exceptions.ViewAccountException;
 import models.Account;
 import utils.InputReader;
+import utils.ValidationUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,17 +61,18 @@ public class AccountManager {
     }
 
     // finding account method - O(1) lookup using HashMap
+    // In AccountManager.java
     public Account findAccount(String accountNumber) throws AccountNotFoundException {
-        if (accountNumber == null || accountNumber.trim().isEmpty()) {
-            throw new AccountNotFoundException("Invalid account number");
+        if (!ValidationUtils.isValidAccountNumber(accountNumber)) {
+            throw new AccountNotFoundException(
+                    "Invalid account number format. Expected: ACC### (e.g., ACC001)"
+            );
         }
 
         Account account = accountMap.get(accountNumber);
-
         if (account == null) {
             throw new AccountNotFoundException("Account not found: " + accountNumber);
         }
-
         return account;
     }
 

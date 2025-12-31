@@ -1,10 +1,18 @@
 package models;
 
+import utils.ValidationUtils;
+
 public class PremiumCustomer extends Customer {
 
     private double minimumBalance;
 
+    // In PremiumCustomer.java (or in Customer constructor)
     public PremiumCustomer(String name, int age, String contact, String address) {
+        ValidationUtils.validateName(name, "Customer name");
+        //ValidationUtils.validateAge(age);
+        ValidationUtils.validatePhone(contact);
+        ValidationUtils.validateAddress(address);
+
         super(name, age, contact, address);
         this.minimumBalance = 1000.0;
     }

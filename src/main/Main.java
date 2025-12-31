@@ -184,11 +184,7 @@ public class Main {
             InputReader inputReader) {
 
         System.out.println("\n+---------------------+\n| PROCESS TRANSACTION |\n+---------------------+");
-//        if (!InputValidator.isValidAccountNumber(accountNumber)) {
-//            System.out.println("Invalid account number. Format: ACC123");
-//            return;
-//        }
-        String accountNumber = inputReader.readString("\nEnter Account number: ");
+        String accountNumber = inputReader.readAccountNumber("\nEnter Account number: ");
 
         try {
             Account account = accountManager.findAccount(accountNumber);

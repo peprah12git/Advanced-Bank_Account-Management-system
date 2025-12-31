@@ -32,5 +32,9 @@ public interface InputReader {
      * @return the validated string input
      */
     String readString(String prompt);
+
+    public String readAccountNumber(String prompt);
     public String readContact(String prompt);
+
+
 }
