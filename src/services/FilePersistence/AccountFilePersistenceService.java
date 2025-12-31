@@ -1,4 +1,4 @@
-package services;
+package services.FilePersistence;
 
 import models.Account;
 import models.Customer;
@@ -6,7 +6,6 @@ import models.SavingsAccount;
 import models.CheckingAccount;
 import models.PremiumCustomer;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +20,7 @@ import java.util.List;
  * US-2.1: Save Accounts to File - Write account data to accounts.txt on exit.
  * US-2.2: Load Accounts on Startup - Read data using Files.lines() and map each line to an object using method references.
  */
-public class FilePersistenceService {
+public class AccountFilePersistenceService {
 
     private static final String ACCOUNTS_FILE = "accounts.txt";
     private static final String DELIMITER = ",";

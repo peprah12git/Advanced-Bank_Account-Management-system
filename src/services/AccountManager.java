@@ -3,6 +3,7 @@ package services;
 import exceptions.AccountNotFoundException;
 import exceptions.ViewAccountException;
 import models.Account;
+import services.FilePersistence.AccountFilePersistenceService;
 import utils.InputReader;
 import utils.ValidationUtils;
 
@@ -15,13 +16,13 @@ import java.util.Map;
 public class AccountManager {
     private ArrayList<Account> accounts;
     private Map<String, Account> accountMap;
-    private FilePersistenceService persistenceService;
+    private AccountFilePersistenceService persistenceService;
 
     // Constructor
     public AccountManager() {
         this.accounts = new ArrayList<>();
         this.accountMap = new HashMap<>();
-        this.persistenceService = new FilePersistenceService();
+        this.persistenceService = new AccountFilePersistenceService();
 
         // Load accounts on startup
         loadAccountsOnStartup();

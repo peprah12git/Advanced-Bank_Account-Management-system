@@ -188,7 +188,7 @@ public class Main {
 
         try {
             Account account = accountManager.findAccount(accountNumber);
-            account.displayAccountDetails();
+           // account.displayAccountDetails();
             handleTransaction(account, transactionManager, inputReader);
         } catch (AccountNotFoundException e) {
             System.out.println(e.getMessage());
