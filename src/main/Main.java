@@ -69,11 +69,10 @@ public class Main {
             }
             case 3 -> customerManager.viewAllCustomers(inputReader);
             case 4 -> processTransaction(accountManager, transactionManager, inputReader);
-            case 5 -> viewTransactionHistory(transactionManager, inputReader);
-            case 6 -> transactionManager.viewAllTransactions(inputReader);
-            case 7 -> generateBankStatement(accountManager, transactionManager, inputReader);
-            case 8 -> runTests(inputReader);
-            case 9 -> {}
+            case 5 -> transactionManager.viewAllTransactions(inputReader);
+            case 6 -> generateBankStatement(accountManager, transactionManager, inputReader);
+            case 7 ->  runTests(inputReader);
+            case 8 -> {}
             default -> System.out.println("Invalid Input. Try Again!");
         }
     }
@@ -289,11 +288,11 @@ public class Main {
     // TRANSACTION HISTORY
     // ========================================
 
-    private static void viewTransactionHistory(TransactionManager transactionManager, InputReader inputReader) {
-        System.out.println("\n+--------------------------+\n| VIEW TRANSACTION HISTORY |\n+--------------------------+");
-        String accountNumber = inputReader.readString("\nEnter Account number: ");
-        transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
-    }
+//    private static void viewTransactionHistory(TransactionManager transactionManager, InputReader inputReader) {
+//        System.out.println("\n+--------------------------+\n| VIEW TRANSACTION HISTORY |\n+--------------------------+");
+//        String accountNumber = inputReader.readString("\nEnter Account number: ");
+//        transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
+//    }
 
 
     // ========================================
