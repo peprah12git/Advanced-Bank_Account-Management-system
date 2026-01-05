@@ -10,62 +10,60 @@ public abstract class Account {
     private double balance;
     private String status;
 
-    private static int accountCounter= 0;
+    private static int accountCounter = 0;
 
-    // Contructor
-    public Account( Customer customer, double balance) {
-        this.accountNumber = generate() ;
+    /**
+     * Constructor
+     */
+    public Account(Customer customer, double balance) {
+        this.accountNumber = generateAccountNumber();
         this.customer = customer;
         this.balance = balance;
         this.status = "Active";
-        //this.accountNumber= accountCounter;
     }
 
-    static String generate() {
-        return  String.format("ACC%03d", ++accountCounter);
+    /**
+     * Generates unique account number in format ACC001, ACC002, etc.
+     */
+    private static String generateAccountNumber() {
+        return String.format("ACC%03d", ++accountCounter);
     }
 
-    // Getters for account number
+    // Getters
     public String getAccountNumber() {
         return accountNumber;
     }
-    // getter for Test.customer
+
     public Customer getCustomer() {
         return customer;
     }
-    // setter for Test.customer
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
-    //-------getter for balance------
+
     public double getBalance() {
         return balance;
     }
-    //-------getter for Status------
+
     public String getStatus() {
         return status;
     }
 
-    // setter for status
+    // Setters
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
 
-    // Setters for balance
-    public void setBalance(double balance) {
-        this.balance = balance;  //  Actually update the field
+    protected void setBalance(double balance) {
+        this.balance = balance;
     }
-    // get Test.accounts.Account method & Display Account method
-    public abstract void displayAccountDetails();
-    public abstract String getAccountType();
-
-    // -------------Deposit money--------------------
 
     /**
-     * @param amount
-     * @throws InvalidAmountException
+     * Deposits money into the account
+    // * @param amount Amount to deposit
+     * @throws InvalidAmountException if amount is invalid
      */
-    // In Account.java
     public void deposit(double amount) throws InvalidAmountException {
         try {
             ValidationUtils.validateAmount(amount, "Deposit");
@@ -75,25 +73,12 @@ public abstract class Account {
         this.balance += amount;
     }
 
-    /**
-     *
-     * @param amount
-     * @return
-     * @throws InsufficientFundsException
-     * @throws InvalidAmountException
-     */
-    // Withdraw Money
-//    public  boolean withdraw(double amount) throws InsufficientFundsException ,InvalidAmountException{
-//        if (amount > balance){
-//            throw new InsufficientFundsException("Insufficient funds! current balance is " + getBalance());
-//        } if (amount <= balance){
-//            throw new InvalidAmountException("Withdrawal must be greater done Zero is ");
-//        }
-//            balance-=amount;
-//        return true;
-//    }
+    // Abstract methods to be implemented by subclasses
+    public abstract void displayAccountDetails();
+
+    public abstract String getAccountType();
+
     public abstract boolean withdraw(double amount) throws InsufficientFundsException, InvalidAmountException;
 
     public abstract boolean processTransaction(double amount, String type) throws InvalidAmountException;
-
 }

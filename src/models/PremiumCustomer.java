@@ -9,8 +9,8 @@ public class PremiumCustomer extends Customer {
     // In PremiumCustomer.java (or in Customer constructor)
     public PremiumCustomer(String name, int age, String contact, String address) {
         ValidationUtils.validateName(name, "Customer name");
-        //ValidationUtils.validateAge(age);
-        ValidationUtils.validatePhone(contact);
+        ValidationUtils.validateAge(age);
+        ValidationUtils.validatePhoneNumber(contact);
         ValidationUtils.validateAddress(address);
 
         super(name, age, contact, address);
