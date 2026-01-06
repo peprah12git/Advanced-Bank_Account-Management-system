@@ -115,6 +115,7 @@ public class Main {
         if (inputReader.readString("\nConfirm account creation? (y/n): ").toLowerCase().startsWith("y")) {
             accountManager.addAccount(account);
             System.out.println("Account Created Successfully!");
+            accountManager.saveAccountsToFile();
             account.displayAccountDetails();
             customer.displayCustomerDetails();
         } else {
@@ -275,7 +276,7 @@ public class Main {
             );
 
             transactionManager.addTransaction(actualTransaction);
-
+            transactionManager.saveTransactionsToFile();
             System.out.printf("%s Successful! New Balance: $%.2f\n",
                     transaction.getType(), account.getBalance());
         } catch (InvalidAmountException e) {

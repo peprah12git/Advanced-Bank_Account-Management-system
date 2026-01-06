@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class TransactionFilePersistence {
 
-    private static final String TRANSACTIONS_FILE = "transactions.txt";
+    private static final String TRANSACTIONS_FILE = "src/data/transactions.txt";
     private static final String DELIMITER = ",";
     private static final int EXPECTED_FIELD_COUNT = 4;
 

@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class AccountFilePersistenceService {
 
-    private static final String ACCOUNTS_FILE = "accounts.txt";
+    private static final String ACCOUNTS_FILE = "src/data/accounts.txt";
     private static final String DELIMITER = ",";
     private static final int EXPECTED_FIELD_COUNT = 10;
 
