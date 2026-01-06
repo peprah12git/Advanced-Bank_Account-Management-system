@@ -397,6 +397,11 @@ public class Main {
     // ========================================
 
     private static void runTests(InputReader inputReader) {
+        fdsff
+                adsfad
+                fadsfads
+                        fadfsfad
+
         System.out.println("Running tests with JUnit...");
 
         try {
