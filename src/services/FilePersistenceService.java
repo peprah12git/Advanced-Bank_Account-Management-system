@@ -1,10 +1,7 @@
 package services;
 
-import models.Account;
-import models.Customer;
-import models.SavingsAccount;
-import models.CheckingAccount;
-import models.PremiumCustomer;
+import models.*;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -159,10 +156,7 @@ public class FilePersistenceService {
                 break;
             case "Regular":
             case "RegularCustomer":
-                // TODO: Add RegularCustomer when available
-                // customer = new RegularCustomer(name, age, contact, address);
-                System.err.println("RegularCustomer not yet implemented. Using PremiumCustomer as default.");
-                customer = new PremiumCustomer(name, age, contact, address);
+                customer = new RegularCustomer(name, age, contact, address);
                 break;
             default:
                 System.err.println("Unknown customer type: " + customerType + ". Defaulting to PremiumCustomer.");

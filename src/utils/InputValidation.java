@@ -21,6 +21,6 @@ public class InputValidation {
         return ACCOUNT_NUMBER_PATTERN.matcher(input).matches();
     }
     public static boolean IsEmail(){
-        return EMAIL_PATTERN.matcher()
+        return EMAIL_PATTERN.matcher();
     }
 }

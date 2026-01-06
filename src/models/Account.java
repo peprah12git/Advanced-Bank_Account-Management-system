@@ -54,12 +54,10 @@ public abstract class Account {
     public void setBalance(double balance) {
         this.balance = balance;  //  Actually update the field
     }
-    // get Test.accounts.Account method & Display Account method
     public abstract void displayAccountDetails();
     public abstract String getAccountType();
 
     // -------------Deposit money--------------------
-
     /**
      * @param amount
      * @throws InvalidAmountException
