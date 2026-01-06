@@ -1,6 +1,7 @@
 package models;
 
 import exceptions.InvalidAmountException;
+import exceptions.OverdraftLimitExceededException;
 
 public class CheckingAccount extends Account {
 
@@ -26,7 +27,7 @@ public class CheckingAccount extends Account {
     }
 
     @Override
-    public boolean withdraw(double amount) throws InvalidAmountException {
+    public boolean withdraw(double amount) throws InvalidAmountException, OverdraftLimitExceededException {
         // Validate amount
         if (amount <= 0) {
             throw new InvalidAmountException("Withdrawal amount must be greater than zero");
@@ -36,7 +37,7 @@ public class CheckingAccount extends Account {
 
         // Check if withdrawal exceeds overdraft limit
         if (getBalance() - amount < allowedLimit) {
-            throw new InvalidAmountException(
+            throw new OverdraftLimitExceededException(
                     "Withdrawal denied! Exceeds overdraft limit of $" + overdraftLimit +
                             ". Current balance: $" + getBalance()
             );
@@ -63,7 +64,7 @@ public class CheckingAccount extends Account {
             double oldBalance = this.getBalance();
             try {
                 this.withdraw(amount);
-            }catch (InvalidAmountException e){
+            }catch (InvalidAmountException | OverdraftLimitExceededException e){
                 return false;
             }
             return this.getBalance() != oldBalance;

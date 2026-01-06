@@ -69,11 +69,10 @@ public class Main {
             }
             case 3 -> customerManager.viewAllCustomers(inputReader);
             case 4 -> processTransaction(accountManager, transactionManager, inputReader);
-            case 5 -> viewTransactionHistory(transactionManager, inputReader);
-            case 6 -> transactionManager.viewAllTransactions(inputReader);
-            case 7 -> generateBankStatement(accountManager, transactionManager, inputReader);
-            case 8 -> runTests(inputReader);
-            case 9 -> {}
+            case 5 -> transactionManager.viewAllTransactions(inputReader);
+            case 6 -> generateBankStatement(accountManager, transactionManager, inputReader);
+            case 7 ->  runTests(inputReader);
+            case 8 -> {}
             default -> System.out.println("Invalid Input. Try Again!");
         }
     }
@@ -116,6 +115,7 @@ public class Main {
         if (inputReader.readString("\nConfirm account creation? (y/n): ").toLowerCase().startsWith("y")) {
             accountManager.addAccount(account);
             System.out.println("Account Created Successfully!");
+            accountManager.saveAccountsToFile();
             account.displayAccountDetails();
             customer.displayCustomerDetails();
         } else {
@@ -184,11 +184,11 @@ public class Main {
             InputReader inputReader) {
 
         System.out.println("\n+---------------------+\n| PROCESS TRANSACTION |\n+---------------------+");
-        String accountNumber = inputReader.readString("\nEnter Account number: ");
+        String accountNumber = inputReader.readAccountNumber("\nEnter Account number: ");
 
         try {
             Account account = accountManager.findAccount(accountNumber);
-            account.displayAccountDetails();
+           // account.displayAccountDetails();
             handleTransaction(account, transactionManager, inputReader);
         } catch (AccountNotFoundException e) {
             System.out.println(e.getMessage());
@@ -276,7 +276,7 @@ public class Main {
             );
 
             transactionManager.addTransaction(actualTransaction);
-
+            transactionManager.saveTransactionsToFile();
             System.out.printf("%s Successful! New Balance: $%.2f\n",
                     transaction.getType(), account.getBalance());
         } catch (InvalidAmountException e) {
@@ -289,11 +289,11 @@ public class Main {
     // TRANSACTION HISTORY
     // ========================================
 
-    private static void viewTransactionHistory(TransactionManager transactionManager, InputReader inputReader) {
-        System.out.println("\n+--------------------------+\n| VIEW TRANSACTION HISTORY |\n+--------------------------+");
-        String accountNumber = inputReader.readString("\nEnter Account number: ");
-        transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
-    }
+//    private static void viewTransactionHistory(TransactionManager transactionManager, InputReader inputReader) {
+//        System.out.println("\n+--------------------------+\n| VIEW TRANSACTION HISTORY |\n+--------------------------+");
+//        String accountNumber = inputReader.readString("\nEnter Account number: ");
+//        transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
+//    }
 
 
     // ========================================
@@ -392,9 +392,9 @@ public class Main {
         System.out.println("✓ Statement generated successfully.");
     }
 
-    // ========================================
-    // TEST RUNNER
-    // ========================================
+    /*
+    TEST RUNNER
+     */
 
     private static void runTests(InputReader inputReader) {
 
