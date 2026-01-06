@@ -12,7 +12,9 @@ public class ValidationUtils {
 
     //phone number pattern{various format}
     //Matches 555-1234, {555} 123-4567
-    private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile("^[+]?[(]?\\d{1,4}[)]?[-\\s.]?\\d{1,4}[-\\s.]?\\d{1,9}$");
+    private static final Pattern PHONE_NUMBER_PATTERN =
+            Pattern.compile("^(0\\d{9}|0\\d{2}\\s\\d{3}\\s\\d{4}|\\+233\\d{9})$");
+
 
     // Transaction ID pattern (TXN followed by timestamp-like number
     private static final Pattern TRANSACTION_ID_PATTERN = Pattern.compile("^TXN\\d+$"
@@ -162,9 +164,9 @@ public class ValidationUtils {
         String normalizedPhone = phone.replaceAll("[\\s.-]", "");
 
         // Ghana phone number pattern
-        String GHANA_PHONE_REGEX = "^(0\\d{9}|\\+233\\d{9})$";
+        String PHONE_REGEX =  "^[+]?\\d{10,15}$";
 
-        if (!normalizedPhone.matches(GHANA_PHONE_REGEX)) {
+        if (!normalizedPhone.matches(PHONE_REGEX)) {
             throw new IllegalArgumentException(
                     "Error: Invalid phone number format.\n" +
                             "Accepted formats:\n" +
