@@ -7,74 +7,95 @@ import utils.InputReader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class AccountManager {
-    private final Map<String, Account> accountMap = new HashMap<>();
+    private ArrayList<Account> accounts;
+    private Map<String, Account> accountMap;
 
     // Constructor
     public AccountManager() {
-        // HashMap handles capacity automatically
+        this.accounts = new ArrayList<>();
+        this.accountMap = new HashMap<>();
     }
 
-    // Add account method - now uses HashMap for O(1) lookups
+    // add account method
     public void addAccount(Account account) {
+        if (account == null) {
+            System.out.println("Cannot add null account");
+            return;
+        }
+
+        // Add to ArrayList for ordered storage
+        accounts.add(account);
+
+        // Add to HashMap for fast lookup by account number
         accountMap.put(account.getAccountNumber(), account);
     }
 
-    // Finding account method - using HashMap for instant lookup
+    // finding account method - O(1) lookup using HashMap
     public Account findAccount(String accountNumber) throws AccountNotFoundException {
-        return Optional.ofNullable(accountMap.get(accountNumber))
-                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountNumber));
+        if (accountNumber == null || accountNumber.trim().isEmpty()) {
+            throw new AccountNotFoundException("Invalid account number");
+        }
+
+        Account account = accountMap.get(accountNumber);
+
+        if (account == null) {
+            throw new AccountNotFoundException("Account not found: " + accountNumber);
+        }
+
+        return account;
     }
 
-    // View all accounts - using Stream for cleaner iteration
+    // view all accounts
     public void viewAllAccounts(InputReader inputReader) throws ViewAccountException {
-        if (accountMap.isEmpty()) {
+        if (accounts.isEmpty()) {
             throw new ViewAccountException();
         }
 
-        accountMap.values().forEach(account -> {
+        for (Account account : accounts) {
             account.displayAccountDetails();
             System.out.println("--------------------------------");
-        });
-
+        }
         inputReader.waitForEnter();
     }
 
-    // Sum of all balances - using Stream reduction
+    // sum of all balances
     public double getTotalBalance() {
-        return accountMap.values().stream()
-                .mapToDouble(Account::getBalance)
-                .sum();
+        double total = 0;
+
+        for (Account account : accounts) {
+            total += account.getBalance();
+        }
+
+        return total;
     }
 
-    // Number of accounts
+    // number of accounts
     public int getAccountCount() {
-        return accountMap.size();
+        return accounts.size();
     }
 
-    // Bonus: Get all accounts as a list (if needed elsewhere)
-    public List<Account> getAllAccounts() {
-        return new ArrayList<>(accountMap.values());
-    }
-
-    // Bonus: Check if account exists
+    // Check if account exists - O(1)
     public boolean accountExists(String accountNumber) {
         return accountMap.containsKey(accountNumber);
     }
 
-    // Bonus: Remove account
+    // Remove account (if needed in future)
     public boolean removeAccount(String accountNumber) {
-        return accountMap.remove(accountNumber) != null;
+        Account account = accountMap.remove(accountNumber);
+
+        if (account != null) {
+            accounts.remove(account);
+            return true;
+        }
+
+        return false;
     }
 
-    // Bonus: Get accounts filtered by minimum balance
-    public List<Account> getAccountsAboveBalance(double minBalance) {
-        return accountMap.values().stream()
-                .filter(account -> account.getBalance() >= minBalance)
-                .toList();
+    // Get all accounts as list
+    public ArrayList<Account> getAllAccounts() {
+        return new ArrayList<>(accounts);
     }
 }
