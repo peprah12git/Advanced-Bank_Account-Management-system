@@ -1,10 +1,12 @@
 package services;
 
 import models.Transaction;
+import services.FilePersistence.TransactionFilePersistence;
 import utils.ConsoleTablePrinter;
 import utils.InputReader;
 import utils.TablePrinter;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -19,10 +21,18 @@ public class TransactionManager {
 
     private ArrayList<Transaction> transactions;
     private final TablePrinter printer;
+    private TransactionFilePersistence persistenceService;
 
     public TransactionManager() {
         this.transactions = new ArrayList<>();
         this.printer = new ConsoleTablePrinter();
+        this.persistenceService = new TransactionFilePersistence();
+
+        // Load transactions on startup
+        loadTransactionsOnStartup();
+
+        // Setup shutdown hook to save on exit
+        setupShutdownHook();
     }
 
     /** Adds a transaction to the history if capacity allows. */
@@ -391,5 +401,48 @@ public class TransactionManager {
 
         displayTransactionSummary(transactionList.size(), totalDeposits, totalWithdrawals);
         waitForUserInput(inputReader);
+    }
+
+    // ==================== FILE PERSISTENCE METHODS ====================
+
+    /**
+     * Loads transactions from file on startup.
+     */
+    private void loadTransactionsOnStartup() {
+        try {
+            List<Transaction> loadedTransactions = persistenceService.loadTransactionsFromFile();
+            transactions.addAll(loadedTransactions);
+        } catch (IOException e) {
+            System.err.println("Error loading transactions from file: " + e.getMessage());
+            System.out.println("Starting with empty transaction list.");
+        }
+    }
+
+    /**
+     * Sets up shutdown hook to save transactions on program exit.
+     */
+    private void setupShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            saveTransactionsToFile();
+        }));
+    }
+
+    /**
+     * Saves all transactions to file.
+     */
+    public void saveTransactionsToFile() {
+        try {
+            persistenceService.saveTransactionsToFile(transactions);
+        } catch (IOException e) {
+            System.err.println("Error saving transactions to file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Reloads transactions from file.
+     */
+    public void reloadTransactionsFromFile() {
+        transactions.clear();
+        loadTransactionsOnStartup();
     }
 }

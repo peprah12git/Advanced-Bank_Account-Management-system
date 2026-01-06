@@ -2,6 +2,8 @@ package utils;
 
 import java.util.Scanner;
 
+import static utils.ValidationUtils.ACCOUNT_NUMBER_PATTERN;
+
 /** -----------A helper method for taking input(InputReader) using Scanner. ----------*/
 public class ConsoleInputReader implements InputReader, AutoCloseable {
 
@@ -97,6 +99,20 @@ public class ConsoleInputReader implements InputReader, AutoCloseable {
             break;
         }
         return value;
+    }
+    public String readAccountNumber(String prompt) {
+        String input;
+
+        while (true) {
+            System.out.print(prompt);
+            input = scanner.nextLine().trim();
+
+            if (ACCOUNT_NUMBER_PATTERN.matcher(input).matches()) {
+                return input;
+            }
+
+            System.out.println("Error: Invalid account number format. Example: ACC001");
+        }
     }
 
 
