@@ -39,7 +39,8 @@ public class Main {
         System.out.println("3. View Customers");
         System.out.println("4. Process Transaction");
         System.out.println("5. View Transaction History for an account");
-        System.out.println("6.Generate Account Statement ");
+       // System.out.println("6. View all Transaction Histories");
+        System.out.println("6. Generate Account Statement");
         System.out.println("7. Run Tests");
         System.out.println("8. Exit\n");
     }
@@ -69,10 +70,16 @@ public class Main {
             case 3 -> customerManager.viewAllCustomers(inputReader);
             case 4 -> processTransaction(accountManager, transactionManager, inputReader);
             case 5 -> transactionManager.viewAllTransactions(inputReader);
-            case 6 -> generateBankStatement(accountManager, transactionManager, inputReader);
-            case 7 ->  runTests(inputReader);
-            case 8 -> {}
+          //  case 6 -> generateBankStatement(accountManager, transactionManager, inputReader);
+            case 6 ->  runTests(inputReader);
+            case 7 -> {}
+            case 8 -> {
+                System.out.println("Thank you for using Bank Account Management System!");
+                System.out.println("Goodbye!");
+                System.exit(0);
+            }
             default -> System.out.println("Invalid Input. Try Again!");
+
         }
     }
 
