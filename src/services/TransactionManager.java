@@ -100,7 +100,6 @@ public class TransactionManager {
 
         String[] headers = createTransactionHeaders();
         String[][] data = buildTransactionData(transactions);
-
         printer.printTable(headers, data);
         displayTransactionSummary(
                 transactions.size(), calculateTotalDeposits(), calculateTotalWithdrawals());

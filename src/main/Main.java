@@ -40,7 +40,7 @@ public class Main {
         System.out.println("2. View Accounts");
         System.out.println("3. View Customers");
         System.out.println("4. Process Transaction");
-        System.out.println("5. View Transaction History for an account");
+        System.out.println("5. View All Transactions ");
         System.out.println("6. Generate Account Statement");
         System.out.println("7. Run Tests");
         System.out.println("8. Simulate Concurrent Transactions");

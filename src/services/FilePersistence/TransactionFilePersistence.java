@@ -65,6 +65,7 @@ public class TransactionFilePersistence {
     private String transactionToCSV(Transaction transaction) {
         return String.join(DELIMITER,
                 transaction.getTransactionId(),
+                transaction.getAccountNumber(),
                 transaction.getType(),
                 String.valueOf(transaction.getAmount()),
                 String.valueOf(transaction.getBalanceAfter())
@@ -84,10 +85,10 @@ public class TransactionFilePersistence {
             }
 
             return new Transaction(
-                    parts[0].trim(),                       // transactionId
-                    parts[1].trim(),                       // type
-                    Double.parseDouble(parts[2].trim()),   // amount
-                    Double.parseDouble(parts[3].trim())    // balance
+                    parts[1].trim(),                       // transactionId
+                    parts[2].trim(),                       // type
+                    Double.parseDouble(parts[3].trim()),   // amount
+                    Double.parseDouble(parts[4].trim())    // balance
             );
 
         } catch (NumberFormatException e) {

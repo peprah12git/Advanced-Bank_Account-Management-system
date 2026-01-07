@@ -90,11 +90,11 @@ public class ConsoleInputReader implements InputReader, AutoCloseable {
                 continue;
             }
 
-            // Check for numbers (Digits 0-9)
-            if (value.matches(".*\\d.*")) {
-                System.out.println("Error: Name cannot contain numbers. Please enter a valid name.");
-                continue;
-            }
+//            // Check for numbers (Digits 0-9)
+//            if (value.matches(".*\\d.*")) {
+//                System.out.println("Error: Name cannot contain numbers. Please enter a valid name.");
+//                continue;
+//            }
 
             break;
         }
