@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class AccountManager {
     private ArrayList<Account> accounts;
-    private Map<String, Account> accountMap;
+    private static Map<String, Account> accountMap;
     private AccountFilePersistenceService persistenceService;
 
     // Constructor
@@ -63,7 +63,7 @@ public class AccountManager {
 
     // finding account method - O(1) lookup using HashMap
     // In AccountManager.java
-    public Account findAccount(String accountNumber) throws AccountNotFoundException {
+    public static Account findAccount(String accountNumber) throws AccountNotFoundException {
         if (!ValidationUtils.isValidAccountNumber(accountNumber)) {
             throw new AccountNotFoundException(
                     "Invalid account number format. Expected: ACC### (e.g., ACC001)"

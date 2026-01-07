@@ -27,7 +27,7 @@ public class CheckingAccount extends Account {
     }
 
     @Override
-    public boolean withdraw(double amount) throws InvalidAmountException, OverdraftLimitExceededException {
+    public synchronized boolean withdraw(double amount) throws InvalidAmountException, OverdraftLimitExceededException {
         // Validate amount
         if (amount <= 0) {
             throw new InvalidAmountException("Withdrawal amount must be greater than zero");
