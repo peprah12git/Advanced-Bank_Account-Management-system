@@ -1,0 +1,48 @@
+# =====================
+# Java / JVM files
+# =====================
+
+# Compiled class files
+*.class
+
+# Log files
+*.log
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# =====================
+# IntelliJ IDEA
+# =====================
+
+# Project settings
+.idea/
+
+# Module files
+*.iml
+
+# Output folders
+/out/
+target/
+
+# =====================
+# Eclipse (optional, if someone uses it)
+# =====================
+.project
+.classpath
+.settings/
+
+# =====================
+# OS generated files
+# =====================
+.DS_Store
+Thumbs.db
+
+# =====================
+# Temporary / backup files
+# =====================
+*.tmp
+*.bak
+*.swp
