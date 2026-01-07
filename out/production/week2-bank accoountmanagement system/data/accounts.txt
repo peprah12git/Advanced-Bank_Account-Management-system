@@ -1,1 +1,1 @@
-ACC001,ss,CUS0,12,1212234567,fgfg,Regular,3131.00,Active,Savings
+ACC001,ss,CUS0,11,1111111111,lll,Regular,1111.00,Active,Savings

@@ -1,10 +1,6 @@
 package services.FilePersistence;
 
-import models.Account;
-import models.Customer;
-import models.SavingsAccount;
-import models.CheckingAccount;
-import models.PremiumCustomer;
+import models.*;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -158,9 +154,7 @@ public class AccountFilePersistenceService {
 
             case "Regular":
             case "RegularCustomer":
-                // TODO: Implement RegularCustomer class
-                System.err.println("RegularCustomer not implemented. Using PremiumCustomer.");
-                return new PremiumCustomer(name, age, contact, address);
+                return new RegularCustomer(name, age, contact, address);
 
             default:
                 System.err.println("Unknown customer type: " + customerType + ". Using PremiumCustomer.");
