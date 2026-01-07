@@ -42,7 +42,7 @@ public class SavingsAccount extends Account{
      */
 
     @Override
-    public boolean withdraw(double amount)  throws InsufficientFundsException {
+    public synchronized boolean withdraw(double amount)  throws InsufficientFundsException {
         if (getBalance() - amount < minimumBalance) {
             throw new InsufficientFundsException("Withdrawal denied! Balance cannot go below minimum: $ " + + minimumBalance);
 //            System.out.println(" Withdrawal denied! Balance cannot go below minimum: $" + minimumBalance);
