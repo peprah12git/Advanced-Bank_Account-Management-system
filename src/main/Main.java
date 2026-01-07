@@ -5,6 +5,8 @@ import services.*;
 import exceptions.*;
 import utils.*;
 
+import static utils.ConsoleInputReader.simulateConcurrency;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -39,9 +41,9 @@ public class Main {
         System.out.println("3. View Customers");
         System.out.println("4. Process Transaction");
         System.out.println("5. View Transaction History for an account");
-        System.out.println("6. View all Transaction Histories");
-        System.out.println("7. Generate Account Statement");
-        System.out.println("8. Run Tests");
+        System.out.println("6. Generate Account Statement");
+        System.out.println("7. Run Tests");
+        System.out.println("8. Simulate Concurrent Transactions");
         System.out.println("9. Exit\n");
     }
 
@@ -72,7 +74,8 @@ public class Main {
             case 5 -> transactionManager.viewAllTransactions(inputReader);
             case 6 -> generateBankStatement(accountManager, transactionManager, inputReader);
             case 7 ->  runTests(inputReader);
-            case 8 -> {}
+            case 8 -> simulateConcurrency(inputReader);
+            case 9 ->{}
             default -> System.out.println("Invalid Input. Try Again!");
         }
     }

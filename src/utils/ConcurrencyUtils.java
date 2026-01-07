@@ -4,7 +4,7 @@ import models.Account;
 import exceptions.AccountNotFoundException;
 import services.AccountManager;
 import java.util.Random;
-import java.util.concurrent.CountDownLatch;
+
 
 public class ConcurrencyUtils implements Runnable{
     private Account account;
@@ -32,14 +32,20 @@ public class ConcurrencyUtils implements Runnable{
         }
     }
 
-    public static void simulateConcurrentTransactions()  {
-        try{
-            Account account = AccountManager.findAccount("acc001");
-            Thread t1 = new Thread(new ConcurrencyUtils(account,"Deposit"));
-            Thread t2 = new Thread(new ConcurrencyUtils(account,"Withdraw"));
-            Thread t3 = new Thread(new ConcurrencyUtils(account,"Withdraw"));
-            Thread t4 = new Thread(new ConcurrencyUtils(account,"Deposit"));
-            Thread t5 = new Thread(new ConcurrencyUtils(account,"Deposit"));
+    public static void simulateConcurrentTransactions(InputReader inputReader) {
+        try {
+            String accountNumber = inputReader.readAccountNumber("Enter account number to simulate transactions: ");
+            Account account = AccountManager.findAccount(accountNumber);
+
+            System.out.println("\nSimulating 5 concurrent transactions on account: " + accountNumber);
+            System.out.printf("Initial Balance: $%.2f\n\n", account.getBalance());
+
+            Thread t1 = new Thread(new ConcurrencyUtils(account, "Deposit"));
+            Thread t2 = new Thread(new ConcurrencyUtils(account, "Withdraw"));
+            Thread t3 = new Thread(new ConcurrencyUtils(account, "Withdraw"));
+            Thread t4 = new Thread(new ConcurrencyUtils(account, "Deposit"));
+            Thread t5 = new Thread(new ConcurrencyUtils(account, "Deposit"));
+
             t1.start();
             t2.start();
             t3.start();
@@ -51,15 +57,14 @@ public class ConcurrencyUtils implements Runnable{
             t3.join();
             t4.join();
             t5.join();
-            System.out.println("Thread-safe opeartions completed successfully.");
-            System.out.printf("Final Balance for ACC001: $%.2f",account.getBalance());
+
+            System.out.println("\nThread-safe operations completed successfully.");
+            System.out.printf("Final Balance for %s: $%.2f\n", accountNumber, account.getBalance());
 
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
+        } catch (AccountNotFoundException e) {
+            System.out.println(e.getMessage());
         }
-        catch ( AccountNotFoundException iae){
-            System.out.println(iae.getMessage());
-        }
-
     }
 }

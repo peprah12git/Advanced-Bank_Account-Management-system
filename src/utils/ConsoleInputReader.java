@@ -100,7 +100,7 @@ public class ConsoleInputReader implements InputReader, AutoCloseable {
         }
         return value;
     }
-    public String readAccountNumber(String prompt) {
+    public  String readAccountNumber(String prompt) {
         String input;
 
         while (true) {
@@ -113,6 +113,11 @@ public class ConsoleInputReader implements InputReader, AutoCloseable {
 
             System.out.println("Error: Invalid account number format. Example: ACC001");
         }
+    }
+    public static void simulateConcurrency(InputReader inputReader) {
+        System.out.println("\n+-------------------------------+\n| SIMULATE CONCURRENT TRANSACTIONS |\n+-------------------------------+");
+        ConcurrencyUtils.simulateConcurrentTransactions(inputReader);
+        inputReader.waitForEnter();
     }
 
 
