@@ -39,10 +39,9 @@ public class Main {
         System.out.println("3. View Customers");
         System.out.println("4. Process Transaction");
         System.out.println("5. View Transaction History for an account");
-        System.out.println("6. View all Transaction Histories");
-        System.out.println("7. Generate Account Statement");
-        System.out.println("8. Run Tests");
-        System.out.println("9. Exit\n");
+        System.out.println("6.Generate Account Statement ");
+        System.out.println("7. Run Tests");
+        System.out.println("8. Exit\n");
     }
 
 

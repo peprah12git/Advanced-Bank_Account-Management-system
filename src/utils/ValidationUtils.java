@@ -162,9 +162,9 @@ public class ValidationUtils {
         String normalizedPhone = phone.replaceAll("[\\s.-]", "");
 
         // Ghana phone number pattern
-        String GHANA_PHONE_REGEX = "^(0\\d{9}|\\+233\\d{9})$";
+        String PHONE_REGEX = "^[+]?\\d{10,15}$";
 
-        if (!normalizedPhone.matches(GHANA_PHONE_REGEX)) {
+        if (!normalizedPhone.matches(PHONE_REGEX)) {
             throw new IllegalArgumentException(
                     "Error: Invalid phone number format.\n" +
                             "Accepted formats:\n" +
@@ -276,7 +276,7 @@ public class ValidationUtils {
      * @throws IllegalArgumentException if age is invalid
      */
     public static void validateAge(int age) throws IllegalArgumentException {
-        if (age < 18) {
+        if (age < 15) {
             throw new IllegalArgumentException(
                     "Error: Customer must be at least 18 years old.\n" +
                             "Provided age: " + age
