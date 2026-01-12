@@ -6,6 +6,7 @@ import exceptions.*;
 import utils.*;
 
 import static utils.ConsoleInputReader.simulateConcurrency;
+import static utils.ConsoleInputReader.simulateConcurrency2;
 
 public class Main {
 
@@ -83,7 +84,8 @@ public class Main {
             case 5 -> transactionManager.viewAllTransactions(inputReader);
             case 6 -> generateBankStatement(accountManager, transactionManager, inputReader);
             case 7 ->  runTests(inputReader);
-            case 8 -> simulateConcurrency(inputReader, accountManager);
+           // case 8 -> simulateConcurrency(inputReader, accountManager);
+            case 8 -> simulateConcurrency2(inputReader,accountManager,transactionManager);
             case 9 ->{}
             default -> System.out.println("Invalid Input. Try Again!");
         }

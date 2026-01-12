@@ -1,6 +1,8 @@
 package utils;
 
 import services.AccountManager;
+import services.TransactionManager;
+
 import java.util.Scanner;
 
 import static utils.ValidationUtils.ACCOUNT_NUMBER_PATTERN;
@@ -118,6 +120,12 @@ public class ConsoleInputReader implements InputReader, AutoCloseable {
     public static void simulateConcurrency(InputReader inputReader, AccountManager accountManager) {
         System.out.println("\n+-------------------------------+\n| SIMULATE CONCURRENT TRANSACTIONS |\n+-------------------------------+");
         ConcurrencyUtils.simulateConcurrentTransactions(inputReader, accountManager);
+        inputReader.waitForEnter();
+    }
+
+    public static void simulateConcurrency2(InputReader inputReader, AccountManager accountManager, TransactionManager transactionManger) {
+        System.out.println("\n+-------------------------------+\n| SIMULATE CONCURRENT TRANSACTIONS |\n+-------------------------------+");
+        ConcurrencyUtils2.simulateConcurrentTransactions(inputReader, accountManager,transactionManger);
         inputReader.waitForEnter();
     }
 

@@ -7,7 +7,7 @@ import java.util.Random;
 
 
 public class ConcurrencyUtils implements Runnable{
-    private Account account;
+    private  Account account;
     private String transactionType;
 
     public ConcurrencyUtils(Account account, String transactionType){
@@ -67,4 +67,5 @@ public class ConcurrencyUtils implements Runnable{
             System.out.println(e.getMessage());
         }
     }
+
 }
