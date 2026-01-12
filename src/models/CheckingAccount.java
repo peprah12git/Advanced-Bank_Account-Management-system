@@ -11,19 +11,34 @@ public class CheckingAccount extends Account {
     // Constructor
     public CheckingAccount( Customer customer, double balance) {
         super(customer, balance);
-        this.overdraftLimit = 1000.0;
+        this.overdraftLimit = 1000;
         this.monthlyFee = 10.0;
+    }
+
+    public static void displayTableHeader() {
+        System.out.println("ACCOUNT LISTING");
+        System.out.println("-------------------------------------------------------------");
+        System.out.printf("%-7s | %-20s | %-10s | %12s | %s\n",
+            "ACC NO",
+            "CUSTOMER NAME",
+            "TYPE",
+            "BALANCE",
+            "STATUS");
+        System.out.println("---------------------------------------------------------------");
     }
 
     @Override
     public void displayAccountDetails() {
-        System.out.println("---------------------------------------------");
-        System.out.printf("| %-19s | %-39s |\n", "Account Number", getAccountNumber());
-        System.out.printf("| %-19s | %-39s |\n","Customer Name", getCustomer().getName());
-        System.out.printf("| %-19s | %-39s :q!|\n", "Account Type","Checking" );
-        System.out.printf("| %-19s | %-39s |\n", "Balance ", "$", getBalance());
-        System.out.printf("| %-19s | %-39s |\n", "Overdraft Limit", overdraftLimit);
-        System.out.println("---------------------------------------------");
+        System.out.printf("%-7s | %-22s | %-12s | %12s | %s\n",
+            getAccountNumber(),
+            getCustomer().getName(),
+            "Checking",
+            String.format("$%,.2f", getBalance()),
+            getStatus());
+        System.out.printf("%-7s | %s\n",
+            "",
+            String.format("Overdraft Limit: $%,.2f | Monthly Fee: $%.2f", overdraftLimit, monthlyFee));
+        System.out.println("---------------------------------------------------------------------");
     }
 
     @Override

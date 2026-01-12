@@ -20,6 +20,18 @@ public class Transaction {
         this.transactionId = generate();
 
     }
+
+    /**
+     * Constructor for loading from file (includes transactionId and timestamp)
+     */
+    public Transaction(String transactionId, String accountNumber, String type, double amount, String timestamp) {
+        this.transactionId = transactionId;
+        this.accountNumber = accountNumber;
+        this.type = type;
+        this.amount = amount;
+        this.timestamp = timestamp;
+        this.balanceAfter = 0; // Will be calculated by the account
+    }
     static String generate() {
         return  String.format("TXN%03d", ++transactionCounter);
     }

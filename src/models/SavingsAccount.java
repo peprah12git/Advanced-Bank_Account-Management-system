@@ -16,18 +16,29 @@ public class SavingsAccount extends Account{
         this.minimumBalance = 500;
     }
 
-    @Override
+    public static void displayTableHeader() {
+        System.out.println("ACCOUNT LISTING");
+        System.out.println("-----------------------------------------------------------------");
+        System.out.printf("%-7s | %-20s | %-10s | %12s | %s\n",
+            "ACC NO",
+            "CUSTOMER NAME",
+            "TYPE",
+            "BALANCE",
+            "STATUS");
+        System.out.println("-----------------------------------------------------------------");
+    }
 
+    @Override
     public void displayAccountDetails() {
-        System.out.println("-----------------------------------------------------------------");
-        System.out.printf("| %-19s | %-39s |\n", "Created Account Details", "");
-        System.out.println("-----------------------------------------------------------------");
-        System.out.printf("| %-19s | %-39s |\n", "Account Number", getAccountNumber());
-        System.out.printf("| %-19s | %-39s |\n", "Customer Name", getCustomer().getName());
-        System.out.printf("| %-19s | %-39s |\n", "Account Type", "Savings");
-        System.out.printf("| %-19s | %-39s |\n", "Balance", "$" + getBalance());
-        System.out.printf("| %-19s | %-39s |\n", "Interest Rate", interestRate + "%");
-        System.out.printf("| %-19s | %-39s |\n", "Minimum Balance", "$" + minimumBalance);
+        System.out.printf("%-7s | %-20s | %-10s | %12s | %s\n",
+            getAccountNumber(),
+            getCustomer().getName(),
+            "Savings",
+            String.format("$%,.2f", getBalance()),
+            getStatus());
+        System.out.printf("%-7s | %s\n",
+            "",
+            String.format("Interest Rate: %.1f%% | Min Balance: $%.2f", interestRate, minimumBalance));
         System.out.println("-----------------------------------------------------------------");
     }
 

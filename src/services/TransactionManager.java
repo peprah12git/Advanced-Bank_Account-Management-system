@@ -51,16 +51,11 @@ public class TransactionManager {
     }
 
     /** Calculates the total amount of all deposits for a specific account. */
-    public double calculateTotalDepositsForAccount(String accountNumber) {
-        double total = 0;
-        for (Transaction t : transactions) {
-            if (t != null &&
-                    t.getAccountNumber().equals(accountNumber) &&
-                    t.getType().equalsIgnoreCase(DEPOSIT_TYPE)) {
-                total += t.getAmount();
-            }
-        }
-        return total;
+    public double  calculateTotalDepositsForAccount(String accountNumber) {
+        return transactions.stream()
+                .filter(t -> t != null && t.getAccountNumber().equals(accountNumber) && t.getType().equalsIgnoreCase(DEPOSIT_TYPE))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
     }
 
     /** Calculates the total amount of withdrawals for a specific account. */
@@ -70,13 +65,10 @@ public class TransactionManager {
 
     /** Calculates the total amount of all deposits. */
     public double calculateTotalDeposits() {
-        double total = 0;
-        for (Transaction t : transactions) {
-            if (t != null && t.getType().equalsIgnoreCase(DEPOSIT_TYPE)) {
-                total += t.getAmount();
-            }
-        }
-        return total;
+        return transactions.stream()
+                .filter(t -> t != null && t.getType().equalsIgnoreCase(DEPOSIT_TYPE))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
     }
 
     /** Calculates the total amount of all withdrawals. */
@@ -159,27 +151,16 @@ public class TransactionManager {
     // ==================== HELPER METHODS ====================
 
     private double calculateTotalByType(String type) {
-        double total = 0;
-        for (Transaction t : transactions) {
-            if (t != null && t.getType().equalsIgnoreCase(type)) {
-                total += t.getAmount();
-            }
-        }
-        return total;
+        return transactions.stream()
+                .filter(t -> t != null && t.getType().equalsIgnoreCase(type))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
     }
 
     private ArrayList<Transaction> filterTransactionsByAccount(String accountNumber) {
-        ArrayList<Transaction> filtered = new ArrayList<>();
-
-        // Add in reverse order (most recent first)
-        for (int i = transactions.size() - 1; i >= 0; i--) {
-            Transaction t = transactions.get(i);
-            if (t != null && t.getAccountNumber().equals(accountNumber)) {
-                filtered.add(t);
-            }
-        }
-
-        return filtered;
+        return transactions.stream()
+                .filter(t -> t != null && t.getAccountNumber().equals(accountNumber))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     private String[] createTransactionHeaders() {
@@ -215,15 +196,10 @@ public class TransactionManager {
     }
 
     private double calculateTotalByTypeForAccount(String accountNumber, String type) {
-        double total = 0;
-        for (Transaction t : transactions) {
-            if (t != null
-                    && t.getAccountNumber().equals(accountNumber)
-                    && t.getType().equalsIgnoreCase(type)) {
-                total += t.getAmount();
-            }
-        }
-        return total;
+        return transactions.stream()
+                .filter(t -> t != null && t.getAccountNumber().equals(accountNumber) && t.getType().equalsIgnoreCase(type))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
     }
 
     private boolean isTransactionListEmpty(InputReader inputReader) {

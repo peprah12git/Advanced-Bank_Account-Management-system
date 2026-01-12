@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class AccountManager {
     private ArrayList<Account> accounts;
-    private static Map<String, Account> accountMap;
+    private Map<String, Account> accountMap;
     private AccountFilePersistenceService persistenceService;
 
     // Constructor
@@ -62,8 +62,7 @@ public class AccountManager {
     }
 
     // finding account method - O(1) lookup using HashMap
-    // In AccountManager.java
-    public static Account findAccount(String accountNumber) throws AccountNotFoundException {
+    public Account findAccountByNumber(String accountNumber) throws AccountNotFoundException {
         if (!ValidationUtils.isValidAccountNumber(accountNumber)) {
             throw new AccountNotFoundException(
                     "Invalid account number format. Expected: ACC### (e.g., ACC001)"
@@ -77,28 +76,38 @@ public class AccountManager {
         return account;
     }
 
+    // Legacy static method for backward compatibility
+    public static Account findAccount(String accountNumber) throws AccountNotFoundException {
+        throw new AccountNotFoundException("Use findAccountByNumber() instead - instance method required.");
+    }
+
     // view all accounts
     public void viewAllAccounts(InputReader inputReader) throws ViewAccountException {
         if (accounts.isEmpty()) {
             throw new ViewAccountException();
         }
 
+        // Display table header
+        if (!accounts.isEmpty()) {
+            Account firstAccount = accounts.get(0);
+            if (firstAccount instanceof models.SavingsAccount) {
+                models.SavingsAccount.displayTableHeader();
+            } else if (firstAccount instanceof models.CheckingAccount) {
+                models.CheckingAccount.displayTableHeader();
+            }
+        }
+
         for (Account account : accounts) {
             account.displayAccountDetails();
-            System.out.println("--------------------------------");
         }
         inputReader.waitForEnter();
     }
 
     // sum of all balances
     public double getTotalBalance() {
-        double total = 0;
-
-        for (Account account : accounts) {
-            total += account.getBalance();
-        }
-
-        return total;
+        return accounts.stream()
+                .mapToDouble(Account::getBalance)
+                .sum();
     }
 
     // number of accounts

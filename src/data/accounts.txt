@@ -1,1 +1,1 @@
-ACC001,mum,CUS0,33,8939039303,Ampabame,Regular,3939.00,Active,Savings
+ACC001,akua,CUS0,33,0983337342,ho,Regular,543.00,Active,Savings

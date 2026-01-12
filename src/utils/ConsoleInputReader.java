@@ -1,5 +1,6 @@
 package utils;
 
+import services.AccountManager;
 import java.util.Scanner;
 
 import static utils.ValidationUtils.ACCOUNT_NUMBER_PATTERN;
@@ -114,9 +115,9 @@ public class ConsoleInputReader implements InputReader, AutoCloseable {
             System.out.println("Error: Invalid account number format. Example: ACC001");
         }
     }
-    public static void simulateConcurrency(InputReader inputReader) {
+    public static void simulateConcurrency(InputReader inputReader, AccountManager accountManager) {
         System.out.println("\n+-------------------------------+\n| SIMULATE CONCURRENT TRANSACTIONS |\n+-------------------------------+");
-        ConcurrencyUtils.simulateConcurrentTransactions(inputReader);
+        ConcurrencyUtils.simulateConcurrentTransactions(inputReader, accountManager);
         inputReader.waitForEnter();
     }
 

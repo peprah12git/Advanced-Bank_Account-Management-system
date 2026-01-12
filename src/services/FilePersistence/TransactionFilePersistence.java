@@ -39,6 +39,10 @@ public class TransactionFilePersistence {
                 writer.write(transactionToCSV(transaction));
                 writer.newLine();
             }
+
+            System.out.println("\n" + "=".repeat(50));
+            System.out.println("SUCCESS: Saved " + transactions.size() + " transactions to file");
+            System.out.println("=".repeat(50));
         }
     }
 
@@ -67,8 +71,8 @@ public class TransactionFilePersistence {
                 transaction.getTransactionId(),
                 transaction.getAccountNumber(),
                 transaction.getType(),
-                String.valueOf(transaction.getAmount()),
-                String.valueOf(transaction.getBalanceAfter())
+                String.format("%.2f", transaction.getAmount()),
+                transaction.getTimestamp()
         );
     }
 
@@ -85,10 +89,11 @@ public class TransactionFilePersistence {
             }
 
             return new Transaction(
-                    parts[1].trim(),                       // transactionId
+                    parts[0].trim(),                       // transactionId
+                    parts[1].trim(),                       // accountNumber
                     parts[2].trim(),                       // type
                     Double.parseDouble(parts[3].trim()),   // amount
-                    Double.parseDouble(parts[4].trim())    // balance
+                    parts[4].trim()                        // timestamp
             );
 
         } catch (NumberFormatException e) {

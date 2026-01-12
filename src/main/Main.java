@@ -26,7 +26,16 @@ public class Main {
             } while (choice != 9);
         }
 
-        System.out.println("Thank you for using Bank Account Management System!\nGoodbye!");
+        // Final save before exit
+        System.out.println("\nFinalizing data persistence...");
+        accountManager.saveAccountsToFile();
+        transactionManager.saveTransactionsToFile();
+
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("Thank you for using Bank Account Management System!");
+        System.out.println("All data has been saved successfully.");
+        System.out.println("Goodbye!");
+        System.out.println("=".repeat(50) + "\n");
     }
 
 
@@ -74,7 +83,7 @@ public class Main {
             case 5 -> transactionManager.viewAllTransactions(inputReader);
             case 6 -> generateBankStatement(accountManager, transactionManager, inputReader);
             case 7 ->  runTests(inputReader);
-            case 8 -> simulateConcurrency(inputReader);
+            case 8 -> simulateConcurrency(inputReader, accountManager);
             case 9 ->{}
             default -> System.out.println("Invalid Input. Try Again!");
         }
@@ -190,9 +199,9 @@ public class Main {
         String accountNumber = inputReader.readAccountNumber("\nEnter Account number: ");
 
         try {
-            Account account = accountManager.findAccount(accountNumber);
+            Account account = accountManager.findAccountByNumber(accountNumber);
            // account.displayAccountDetails();
-            handleTransaction(account, transactionManager, inputReader);
+            handleTransaction(account, transactionManager, accountManager, inputReader);
         } catch (AccountNotFoundException e) {
             System.out.println(e.getMessage());
             inputReader.waitForEnter();
@@ -202,6 +211,7 @@ public class Main {
     private static void handleTransaction(
             Account account,
             TransactionManager transactionManager,
+            AccountManager accountManager,
             InputReader inputReader) {
 
         int transactionType = promptTransactionType(inputReader);
@@ -212,7 +222,7 @@ public class Main {
         printTransactionConfirmation(transaction, account);
 
         if (confirm(inputReader)) {
-            executeTransaction(account, transactionManager, transaction);
+            executeTransaction(account, transactionManager, accountManager, transaction);
         } else {
             System.out.println("Transaction cancelled.");
         }
@@ -264,10 +274,12 @@ public class Main {
     private static void executeTransaction(
             Account account,
             TransactionManager transactionManager,
+            AccountManager accountManager,
             Transaction transaction) {
 
         try {
             double previousBalance = account.getBalance();
+
             account.processTransaction(transaction.getAmount(), transaction.getType());
 
             // Update transaction with actual new balance
@@ -279,25 +291,19 @@ public class Main {
             );
 
             transactionManager.addTransaction(actualTransaction);
+
             transactionManager.saveTransactionsToFile();
+
+            accountManager.saveAccountsToFile();  // IMPORTANT: Save updated account balance to file
             System.out.printf("%s Successful! New Balance: $%.2f\n",
                     transaction.getType(), account.getBalance());
         } catch (InvalidAmountException e) {
             System.out.println("Transaction failed: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error during transaction: " + e.getMessage());
+            e.printStackTrace();
         }
     }
-
-
-    // ========================================
-    // TRANSACTION HISTORY
-    // ========================================
-
-//    private static void viewTransactionHistory(TransactionManager transactionManager, InputReader inputReader) {
-//        System.out.println("\n+--------------------------+\n| VIEW TRANSACTION HISTORY |\n+--------------------------+");
-//        String accountNumber = inputReader.readString("\nEnter Account number: ");
-//        transactionManager.viewTransactionsByAccount(accountNumber, inputReader);
-//    }
-
 
     // ========================================
     // BANK STATEMENT
@@ -312,9 +318,9 @@ public class Main {
         String accountNumber = inputReader.readString("\nEnter Account number: ");
 
         try {
-            Account account = accountManager.findAccount(accountNumber);
+            Account account = accountManager.findAccountByNumber(accountNumber);
             account.displayAccountDetails();
-            displayTransactions(transactionManager.getTransactionsForAccount(accountNumber));
+            //displayTransactions(transactionManager.getTransactionsForAccount(accountNumber));
             displaySummary(transactionManager, accountNumber, account.getBalance());
         } catch (AccountNotFoundException e) {
             System.out.println(e.getMessage());
@@ -323,25 +329,25 @@ public class Main {
         inputReader.waitForEnter();
     }
 
-    private static void displayTransactions(Transaction[] transactions) {
-        System.out.println("\n--- Transactions ---");
-
-        if (transactions.length == 0) {
-            System.out.println("No transactions found.");
-        } else {
-            new utils.ConsoleTablePrinter().printTable(
-                    new String[] {"TRANSACTION ID", "TYPE", "AMOUNT", "DATE"},
-                    java.util.Arrays.stream(transactions)
-                            .map(t -> new String[] {
-                                    t.getTransactionId(),
-                                    t.getType(),
-                                    "$" + t.getAmount(),
-                                    t.getTimestamp()
-                            })
-                            .toArray(String[][]::new)
-            );
-        }
-    }
+//    private static void displayTransactions(Transaction[] transactions) {
+//        System.out.println("\n--- Transactions ---");
+//
+//        if (transactions.length == 0) {
+//            System.out.println("No transactions found.");
+//        } else {
+//            new utils.ConsoleTablePrinter().printTable(
+//                    new String[] {"TRANSACTION ID", "TYPE", "AMOUNT", "DATE"},
+//                    java.util.Arrays.stream(transactions)
+//                            .map(t -> new String[] {
+//                                    t.getTransactionId(),
+//                                    t.getType(),
+//                                    "$" + t.getAmount(),
+//                                    t.getTimestamp()
+//                            })
+//                            .toArray(String[][]::new)
+//            );
+//        }
+//    }
 
     private static void displaySummary(
             TransactionManager transactionManager,

@@ -10,7 +10,7 @@ public class ConcurrencyUtils implements Runnable{
     private Account account;
     private String transactionType;
 
-    public ConcurrencyUtils(Account account,String transactionType){
+    public ConcurrencyUtils(Account account, String transactionType){
         this.account = account;
         this.transactionType = transactionType;
     }
@@ -32,10 +32,10 @@ public class ConcurrencyUtils implements Runnable{
         }
     }
 
-    public static void simulateConcurrentTransactions(InputReader inputReader) {
+    public static void simulateConcurrentTransactions(InputReader inputReader, AccountManager accountManager) {
         try {
             String accountNumber = inputReader.readAccountNumber("Enter account number to simulate transactions: ");
-            Account account = AccountManager.findAccount(accountNumber);
+            Account account = accountManager.findAccountByNumber(accountNumber);
 
             System.out.println("\nSimulating 5 concurrent transactions on account: " + accountNumber);
             System.out.printf("Initial Balance: $%.2f\n\n", account.getBalance());

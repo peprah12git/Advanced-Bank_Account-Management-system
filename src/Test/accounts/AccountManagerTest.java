@@ -34,7 +34,7 @@ class AccountManagerTest {
     void testFindAccountThrowsExceptionWhenNotExist() {
         AccountManager manager = new AccountManager(); // empty manager
         assertThrows(AccountNotFoundException.class, () -> {
-            manager.findAccount("ACC001");  // test triggers exception
+            manager.findAccountByNumber("ACC001");  // test triggers exception
         });
     }
 

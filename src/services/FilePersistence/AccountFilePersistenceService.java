@@ -13,8 +13,8 @@ import java.util.List;
 
 /**
  * Service for file persistence operations.
- * US-2.1: Save Accounts to File - Write account data to accounts.txt on exit.
- * US-2.2: Load Accounts on Startup - Read data using Files.lines() and map each line to an object using method references.
+ *  Save Accounts to File - Write account data to accounts.txt on exit.
+ *  Load Accounts on Startup - Read data using Files.lines() and map each line to an object using method references.
  */
 public class AccountFilePersistenceService {
 
@@ -44,7 +44,9 @@ public class AccountFilePersistenceService {
                 writer.newLine();
             }
 
-            System.out.println("Successfully saved " + accounts.size() + " accounts to " + ACCOUNTS_FILE);
+            System.out.println("\n" + "=".repeat(50));
+            System.out.println("SUCCESS: Saved " + accounts.size() + " accounts to file");
+            System.out.println("=".repeat(50));
         }
     }
 
