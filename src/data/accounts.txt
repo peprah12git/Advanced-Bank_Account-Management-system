@@ -1,1 +1,2 @@
-ACC001,akua,CUS0,33,0983337342,ho,Regular,543.00,Active,Savings
+ACC001,Emmanuel,CUS0,34,0959332345,Ejisu,Regular,535.00,Active,Savings
+ACC002,Noah,CUS2,34,0849223456,Kasoa,Regular,699.00,Active,Savings

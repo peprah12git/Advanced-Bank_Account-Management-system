@@ -9,19 +9,15 @@ import utils.ValidationUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class AccountManager {
-    private ArrayList<Account> accounts;
-    private Map<String, Account> accountMap;
+    private List<Account> accounts;
     private AccountFilePersistenceService persistenceService;
 
     // Constructor
     public AccountManager() {
         this.accounts = new ArrayList<>();
-        this.accountMap = new HashMap<>();
         this.persistenceService = new AccountFilePersistenceService();
 
         // Load accounts on startup
@@ -35,10 +31,9 @@ public class AccountManager {
         try {
             List<Account> loadedAccounts = persistenceService.loadAccountsFromFile();
 
-            // Add each loaded account to both data structures
+            // Add each loaded account to the list
             for (Account account : loadedAccounts) {
                 accounts.add(account);
-                accountMap.put(account.getAccountNumber(), account);
             }
 
         } catch (IOException e) {
@@ -54,14 +49,11 @@ public class AccountManager {
             return;
         }
 
-        // Add to ArrayList for ordered storage
+        // Add to List for ordered storage
         accounts.add(account);
-
-        // Add to HashMap for fast lookup by account number
-        accountMap.put(account.getAccountNumber(), account);
     }
 
-    // finding account method - O(1) lookup using HashMap
+    // finding account method - Uses Stream API with filter
     public Account findAccountByNumber(String accountNumber) throws AccountNotFoundException {
         if (!ValidationUtils.isValidAccountNumber(accountNumber)) {
             throw new AccountNotFoundException(
@@ -69,7 +61,11 @@ public class AccountManager {
             );
         }
 
-        Account account = accountMap.get(accountNumber);
+        Account account = accounts.stream()
+                .filter(a -> a.getAccountNumber().equals(accountNumber))
+                .findFirst()
+                .orElse(null);
+
         if (account == null) {
             throw new AccountNotFoundException("Account not found: " + accountNumber);
         }
@@ -115,25 +111,19 @@ public class AccountManager {
         return accounts.size();
     }
 
-    // Check if account exists - O(1)
+    // Check if account exists - Uses Stream API with anyMatch
     public boolean accountExists(String accountNumber) {
-        return accountMap.containsKey(accountNumber);
+        return accounts.stream()
+                .anyMatch(a -> a.getAccountNumber().equals(accountNumber));
     }
 
     // Remove account (if needed in future)
     public boolean removeAccount(String accountNumber) {
-        Account account = accountMap.remove(accountNumber);
-
-        if (account != null) {
-            accounts.remove(account);
-            return true;
-        }
-
-        return false;
+        return accounts.removeIf(account -> account.getAccountNumber().equals(accountNumber));
     }
 
     // Get all accounts as list
-    public ArrayList<Account> getAllAccounts() {
+    public List<Account> getAllAccounts() {
         return new ArrayList<>(accounts);
     }
 
@@ -155,7 +145,6 @@ public class AccountManager {
      */
     public void reloadAccountsFromFile() {
         accounts.clear();
-        accountMap.clear();
         loadAccountsOnStartup();
     }
 }

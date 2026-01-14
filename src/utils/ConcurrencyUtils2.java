@@ -9,9 +9,9 @@ import services.AccountManager;
 import services.TransactionManager;
 
 import java.util.Random;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class ConcurrencyUtils2 {
 
@@ -27,7 +27,7 @@ public class ConcurrencyUtils2 {
         System.out.println("     CONCURRENT TRANSACTION SIMULATION STARTED");
         System.out.println("=".repeat(60));
         
-        int numberOfThreads = inputReader.readInt("Enter  a number between 2 t0 10 to start concurrency simulation", 2, 10);
+        int numberOfThreads = inputReader.readInt("Enter  a number between 2 t0 10 to start concurrency simulation: ", 2, 10);
         System.out.println("\nCreating thread pool with " + numberOfThreads + " threads...");
         ExecutorService executer = Executors.newFixedThreadPool(numberOfThreads);
         for (int i = 0; i < numberOfThreads; i++) {
@@ -38,6 +38,19 @@ public class ConcurrencyUtils2 {
         }
         System.out.println("\nAll threads submitted. Processing transactions...\n");
         executer.shutdown();
+        
+        // Wait for all threads to complete before showing completion message
+        try {
+            if (!executer.awaitTermination(30, TimeUnit.SECONDS)) {
+                System.err.println("Some threads did not complete within timeout");
+                executer.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            System.err.println("Thread interrupted while waiting: " + e.getMessage());
+            executer.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+        
         System.out.println("\n" + "=".repeat(60));
         System.out.println("     SIMULATION COMPLETE");
         System.out.println("=".repeat(60) + "\n");
@@ -55,6 +68,11 @@ public class ConcurrencyUtils2 {
         try {
             if (isDeposit) {
                 synchronized (account) {
+                    // Capture balance BEFORE deposit
+                    double balanceBeforeDeposit = account.getBalance();
+                    // Perform the actual deposit operation
+                    account.deposit(amount);
+                    // Create transaction with the new balance
                     Transaction transaction = new Transaction(account.getAccountNumber(), account.getAccountType(), amount, account.getBalance());
                     transactionManager.addTransaction(transaction);
                     System.out.println("[" + Thread.currentThread().getName() + "] ✓ Deposit successful! New balance: $" + String.format("%.2f", account.getBalance()));
@@ -63,7 +81,11 @@ public class ConcurrencyUtils2 {
             } else {
                 synchronized (account) {
                     try {
+                        // Capture balance BEFORE withdrawal
+                        double balanceBeforeWithdrawal = account.getBalance();
+                        // Perform the actual withdrawal operation
                         account.withdraw(amount);
+                        // Create transaction with the new balance after withdrawal
                         Transaction transaction = new Transaction(account.getAccountNumber(), account.getAccountType(), amount, account.getBalance());
                         transactionManager.addTransaction(transaction);
                         System.out.println("[" + Thread.currentThread().getName() + "] ✓ Withdrawal successful! New balance: $" + String.format("%.2f", account.getBalance()));
@@ -77,8 +99,5 @@ public class ConcurrencyUtils2 {
         } catch (Exception e) {
             System.out.println("Invalid Amount");
         }
-
-
-
     }
 }

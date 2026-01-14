@@ -19,7 +19,7 @@ public class TransactionManager {
     private static final String DEPOSIT_TYPE = "DEPOSIT";
     private static final String WITHDRAWAL_TYPE = "WITHDRAWAL";
 
-    private ArrayList<Transaction> transactions;
+    private List<Transaction> transactions;
     private final TablePrinter printer;
     private TransactionFilePersistence persistenceService;
 
@@ -91,7 +91,7 @@ public class TransactionManager {
         }
 
         String[] headers = createTransactionHeaders();
-        String[][] data = buildTransactionData(transactions);
+        String[][] data = buildTransactionData((ArrayList<Transaction>) transactions);
         printer.printTable(headers, data);
         displayTransactionSummary(
                 transactions.size(), calculateTotalDeposits(), calculateTotalWithdrawals());

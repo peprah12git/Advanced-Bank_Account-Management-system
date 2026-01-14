@@ -5,7 +5,7 @@ import services.*;
 import exceptions.*;
 import utils.*;
 
-import static utils.ConsoleInputReader.simulateConcurrency;
+import static utils.ConsoleInputReader.simulateConcurrency2;
 import static utils.ConsoleInputReader.simulateConcurrency2;
 
 public class Main {
@@ -331,25 +331,6 @@ public class Main {
         inputReader.waitForEnter();
     }
 
-//    private static void displayTransactions(Transaction[] transactions) {
-//        System.out.println("\n--- Transactions ---");
-//
-//        if (transactions.length == 0) {
-//            System.out.println("No transactions found.");
-//        } else {
-//            new utils.ConsoleTablePrinter().printTable(
-//                    new String[] {"TRANSACTION ID", "TYPE", "AMOUNT", "DATE"},
-//                    java.util.Arrays.stream(transactions)
-//                            .map(t -> new String[] {
-//                                    t.getTransactionId(),
-//                                    t.getType(),
-//                                    "$" + t.getAmount(),
-//                                    t.getTimestamp()
-//                            })
-//                            .toArray(String[][]::new)
-//            );
-//        }
-//    }
 
     private static void displaySummary(
             TransactionManager transactionManager,
@@ -358,7 +339,7 @@ public class Main {
 
         Transaction[] transactions = transactionManager.getTransactionsForAccount(accountNumber);
         double totalDeposits = transactionManager.calculateTotalDepositsForAccount(accountNumber);
-        double totalWithdrawals = transactionManager.calculateTotalWithdrawals();
+        double totalWithdrawals = transactionManager.calculateTotalWithdrawalsForAccount(accountNumber);
         double netChange = totalDeposits - totalWithdrawals;
 
         System.out.println("\n--- Transaction Summary ---");
@@ -385,6 +366,7 @@ public class Main {
 
                 tableData[i] = new String[] {
                         t.getTransactionId(),
+                        t.getTimestamp(),
                         t.getType(),
                         String.format("%s$%.2f", amount >= 0 ? "+" : "", amount),
                         String.format("$%,.2f", runningBalance)
@@ -392,7 +374,7 @@ public class Main {
             }
 
             new ConsoleTablePrinter().printTable(
-                    new String[] {"ID", "TYPE", "AMOUNT", "BALANCE"},
+                    new String[] {"ID","DATE/TIME", "TYPE", "AMOUNT", "BALANCE"},
                     tableData
             );
         }

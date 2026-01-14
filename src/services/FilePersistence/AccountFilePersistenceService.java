@@ -3,6 +3,7 @@ package services.FilePersistence;
 import models.*;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,9 +19,23 @@ import java.util.List;
  */
 public class AccountFilePersistenceService {
 
+    // Use a more reliable path that works regardless of execution context
     private static final String ACCOUNTS_FILE = "src/data/accounts.txt";
     private static final String DELIMITER = ",";
     private static final int EXPECTED_FIELD_COUNT = 10;
+
+    /**
+     * Gets the accounts file path, ensuring the directory exists.
+     * Creates parent directories if they don't exist.
+     */
+    private static Path getAccountsFilePath() throws IOException {
+        Path filePath = Paths.get(ACCOUNTS_FILE);
+        // Ensure parent directories exist
+        if (!Files.exists(filePath.getParent())) {
+            Files.createDirectories(filePath.getParent());
+        }
+        return filePath;
+    }
 
     /**
      * US-2.1: Saves all accounts to accounts.txt file on exit.
@@ -32,7 +47,7 @@ public class AccountFilePersistenceService {
      * @throws IOException if file writing fails
      */
     public void saveAccountsToFile(List<Account> accounts) throws IOException {
-        Path filePath = Paths.get(ACCOUNTS_FILE);
+        Path filePath = getAccountsFilePath();
 
         try (BufferedWriter writer = Files.newBufferedWriter(filePath,
                 StandardOpenOption.CREATE,
@@ -46,6 +61,7 @@ public class AccountFilePersistenceService {
 
             System.out.println("\n" + "=".repeat(50));
             System.out.println("SUCCESS: Saved " + accounts.size() + " accounts to file");
+            System.out.println("File location: " + filePath.toAbsolutePath());
             System.out.println("=".repeat(50));
         }
     }
@@ -58,10 +74,11 @@ public class AccountFilePersistenceService {
      * @throws IOException if file reading fails
      */
     public List<Account> loadAccountsFromFile() throws IOException {
-        Path filePath = Paths.get(ACCOUNTS_FILE);
+        Path filePath = getAccountsFilePath();
 
         if (!Files.exists(filePath)) {
-            System.out.println("No existing accounts file found. Starting fresh.");
+            System.out.println("No existing accounts file found at: " + filePath.toAbsolutePath());
+            System.out.println("Starting fresh.");
             return new ArrayList<>();
         }
 
@@ -72,7 +89,7 @@ public class AccountFilePersistenceService {
                 .filter(account -> account != null)
                 .toList();  // or .collect(Collectors.toList()) for older Java
 
-        System.out.println("Successfully loaded " + accounts.size() + " accounts from " + ACCOUNTS_FILE);
+        System.out.println("Successfully loaded " + accounts.size() + " accounts from " + filePath.toAbsolutePath());
         return accounts;
     }
 

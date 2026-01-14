@@ -117,11 +117,11 @@ public class ConsoleInputReader implements InputReader, AutoCloseable {
             System.out.println("Error: Invalid account number format. Example: ACC001");
         }
     }
-    public static void simulateConcurrency(InputReader inputReader, AccountManager accountManager) {
-        System.out.println("\n+-------------------------------+\n| SIMULATE CONCURRENT TRANSACTIONS |\n+-------------------------------+");
-        ConcurrencyUtils.simulateConcurrentTransactions(inputReader, accountManager);
-        inputReader.waitForEnter();
-    }
+//    public static void simulateConcurrency(InputReader inputReader, AccountManager accountManager) {
+//        System.out.println("\n+-------------------------------+\n| SIMULATE CONCURRENT TRANSACTIONS |\n+-------------------------------+");
+//        ConcurrencyUtils2.simulateConcurrentTransactions(inputReader, accountManager);
+//        inputReader.waitForEnter();
+//    }
 
     public static void simulateConcurrency2(InputReader inputReader, AccountManager accountManager, TransactionManager transactionManger) {
         System.out.println("\n+-------------------------------+\n| SIMULATE CONCURRENT TRANSACTIONS |\n+-------------------------------+");
