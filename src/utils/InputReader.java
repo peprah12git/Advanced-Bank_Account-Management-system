@@ -35,6 +35,7 @@ public interface InputReader {
 
     public String readAccountNumber(String prompt);
     public String readContact(String prompt);
+    public String readAddress(String prompt);
 
 
 }

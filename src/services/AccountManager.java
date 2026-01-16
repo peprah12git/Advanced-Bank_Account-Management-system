@@ -2,14 +2,13 @@ package services;
 
 import exceptions.AccountNotFoundException;
 import exceptions.ViewAccountException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import models.Account;
 import services.FilePersistence.AccountFilePersistenceService;
 import utils.InputReader;
 import utils.ValidationUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AccountManager {
     private List<Account> accounts;
@@ -62,9 +61,9 @@ public class AccountManager {
         }
 
         Account account = accounts.stream()
-                .filter(a -> a.getAccountNumber().equals(accountNumber))
-                .findFirst()
-                .orElse(null);
+                .filter(a -> a.getAccountNumber().equals(accountNumber)) // Filter by account number
+                .findFirst() // Get first match
+                .orElse(null); // Return null if not found
 
         if (account == null) {
             throw new AccountNotFoundException("Account not found: " + accountNumber);
@@ -102,7 +101,7 @@ public class AccountManager {
     // sum of all balances
     public double getTotalBalance() {
         return accounts.stream()
-                .mapToDouble(Account::getBalance)
+                .mapToDouble(Account::getBalance) // Map each account to its balance
                 .sum();
     }
 

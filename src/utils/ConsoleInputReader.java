@@ -1,10 +1,8 @@
 package utils;
 
+import java.util.Scanner;
 import services.AccountManager;
 import services.TransactionManager;
-
-import java.util.Scanner;
-
 import static utils.ValidationUtils.ACCOUNT_NUMBER_PATTERN;
 
 /** -----------A helper method for taking input(InputReader) using Scanner. ----------*/
@@ -116,6 +114,23 @@ public class ConsoleInputReader implements InputReader, AutoCloseable {
 
             System.out.println("Error: Invalid account number format. Example: ACC001");
         }
+    }
+
+    public String readAddress(String prompt) {
+        String address;
+
+        while (true) {
+            System.out.print(prompt);
+            address = scanner.nextLine().trim();
+
+            if (address.isEmpty()) {
+                System.out.println("Error: Address cannot be empty. Please try again.");
+                continue;
+            }
+
+            break;
+        }
+        return address;
     }
 //    public static void simulateConcurrency(InputReader inputReader, AccountManager accountManager) {
 //        System.out.println("\n+-------------------------------+\n| SIMULATE CONCURRENT TRANSACTIONS |\n+-------------------------------+");

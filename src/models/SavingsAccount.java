@@ -78,7 +78,8 @@ public class SavingsAccount extends Account{
             double oldBalance = this.getBalance();
             try {
                 this.withdraw(amount);
-            }catch (InsufficientFundsException e){
+            } catch (InsufficientFundsException e) {
+                System.err.println("Withdrawal failed: " + e.getMessage());
                 return false;
             }
             return this.getBalance() != oldBalance;

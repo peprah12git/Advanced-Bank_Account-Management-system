@@ -305,13 +305,5 @@ public class ValidationUtils {
                             "Please provide a valid address."
             );
         }
-
-        if (address.trim().length() < 5) {
-            throw new IllegalArgumentException(
-                    "Error: Address is too short.\n" +
-                            "Address must be at least 5 characters long.\n" +
-                            "Provided: " + address
-            );
-        }
     }
 }

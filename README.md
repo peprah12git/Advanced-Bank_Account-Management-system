@@ -442,3 +442,4 @@ This project is licensed under the terms specified in the [LICENSE](legal/LICENS
 ---
 
 **Author:** Emmanuel Mensah Peprah
+# Smart-E-commerce-System

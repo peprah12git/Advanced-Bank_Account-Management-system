@@ -60,7 +60,6 @@ public class CheckingAccount extends Account {
 
         //  Actually perform the withdrawal
         setBalance(getBalance() - amount);
-        System.out.println("Withdrawal successful! New balance: $" + getBalance());
         return true;
     }
 
@@ -79,7 +78,8 @@ public class CheckingAccount extends Account {
             double oldBalance = this.getBalance();
             try {
                 this.withdraw(amount);
-            }catch (InvalidAmountException | OverdraftLimitExceededException e){
+            } catch (InvalidAmountException | OverdraftLimitExceededException e) {
+                System.err.println("Withdrawal failed: " + e.getMessage());
                 return false;
             }
             return this.getBalance() != oldBalance;

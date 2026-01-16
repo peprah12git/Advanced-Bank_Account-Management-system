@@ -1,11 +1,9 @@
 package main;
 
+import exceptions.*;
 import models.*;
 import services.*;
-import exceptions.*;
 import utils.*;
-
-import static utils.ConsoleInputReader.simulateConcurrency2;
 import static utils.ConsoleInputReader.simulateConcurrency2;
 
 public class Main {
@@ -144,7 +142,7 @@ public class Main {
         String name = inputReader.readString("Enter customer name: ");
         int age = inputReader.readInt("Enter customer age: ", 0, 150);
         String contact = inputReader.readContact("Enter customer contact: ");
-        String address = inputReader.readString("Enter customer address: ");
+        String address = inputReader.readAddress("Enter customer address: ");
 
         System.out.println("\nCustomer type:");
         System.out.println("1. Regular Customer (Standard banking services)");
@@ -282,14 +280,21 @@ public class Main {
         try {
             double previousBalance = account.getBalance();
 
-            account.processTransaction(transaction.getAmount(), transaction.getType());
+            boolean success = account.processTransaction(transaction.getAmount(), transaction.getType());
 
+            if (!success) {
+                System.out.println("Transaction processing failed - balance update did not occur");
+                return;
+            }
+
+            double newBalance = account.getBalance();
+            
             // Update transaction with actual new balance
             Transaction actualTransaction = new Transaction(
                     account.getAccountNumber(),
                     transaction.getType(),
                     transaction.getAmount(),
-                    account.getBalance()  // Use the ACTUAL balance after processing
+                    newBalance
             );
 
             transactionManager.addTransaction(actualTransaction);
@@ -298,7 +303,7 @@ public class Main {
 
             accountManager.saveAccountsToFile();  // IMPORTANT: Save updated account balance to file
             System.out.printf("%s Successful! New Balance: $%.2f\n",
-                    transaction.getType(), account.getBalance());
+                    transaction.getType(), newBalance);
         } catch (InvalidAmountException e) {
             System.out.println("Transaction failed: " + e.getMessage());
         } catch (Exception e) {
@@ -382,7 +387,7 @@ public class Main {
         System.out.println();
         System.out.printf("Net Change: %s$%.2f\n", netChange >= 0 ? "+" : "", netChange);
         System.out.println();
-        System.out.println("✓ Statement generated successfully.");
+        System.out.println("Statement generated successfully.");
     }
 
     /*

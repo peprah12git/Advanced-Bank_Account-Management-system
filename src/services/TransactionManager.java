@@ -1,16 +1,15 @@
 package services;
 
-import models.Transaction;
-import services.FilePersistence.TransactionFilePersistence;
-import utils.ConsoleTablePrinter;
-import utils.InputReader;
-import utils.TablePrinter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import models.Transaction;
+import services.FilePersistence.TransactionFilePersistence;
+import utils.ConsoleTablePrinter;
+import utils.InputReader;
+import utils.TablePrinter;
 
 /** Manages a collection of transactions with fixed capacity. */
 public class TransactionManager {
@@ -66,7 +65,7 @@ public class TransactionManager {
     /** Calculates the total amount of all deposits. */
     public double calculateTotalDeposits() {
         return transactions.stream()
-                .filter(t -> t != null && t.getType().equalsIgnoreCase(DEPOSIT_TYPE))
+                .filter(t -> t != null && t.getType().equalsIgnoreCase(DEPOSIT_TYPE)) //    
                 .mapToDouble(Transaction::getAmount)
                 .sum();
     }

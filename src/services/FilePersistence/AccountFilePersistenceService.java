@@ -1,9 +1,6 @@
 package services.FilePersistence;
 
-import models.*;
-
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,6 +8,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
+import models.*;
 
 /**
  * Service for file persistence operations.
@@ -38,7 +36,7 @@ public class AccountFilePersistenceService {
     }
 
     /**
-     * US-2.1: Saves all accounts to accounts.txt file on exit.
+     * Saves all accounts to accounts.txt file on exit.
      * Uses BufferedWriter for efficient writing.
      * Format: accountNumber,customerName,customerId,customerAge,customerContact,
      *         customerAddress,customerType,balance,status,accountType
@@ -83,8 +81,8 @@ public class AccountFilePersistenceService {
         }
 
         // US-2.2: Using Files.lines() and method reference to map lines to objects
-        List<Account> accounts = Files.lines(filePath)
-                .filter(line -> !line.trim().isEmpty())
+        List<Account> accounts = Files.lines(filePath) // read lines as Stream<String>
+                .filter(line -> !line.trim().isEmpty()) // Filter out/ ignore empty lines
                 .map(this::csvToAccount)  // Method reference for mapping
                 .filter(account -> account != null)
                 .toList();  // or .collect(Collectors.toList()) for older Java
@@ -103,10 +101,10 @@ public class AccountFilePersistenceService {
         Customer customer = account.getCustomer();
         return String.join(DELIMITER,
                 account.getAccountNumber(),
-                escapeCsvField(customer.getName()),
-                customer.getCustomerId(),
-                String.valueOf(customer.getAge()),
-                escapeCsvField(customer.getContact()),
+                escapeCsvField(customer.getName()), // Escape if name contains comma
+                customer.getCustomerId(), //
+                String.valueOf(customer.getAge()),//
+                escapeCsvField(customer.getContact()),//
                 escapeCsvField(customer.getAddress()),
                 customer.getCustomerType(),
                 String.format("%.2f", account.getBalance()),
@@ -122,7 +120,7 @@ public class AccountFilePersistenceService {
      */
     private Account csvToAccount(String line) {
         try {
-            String[] parts = line.split(DELIMITER);
+            String[] parts = line.split(DELIMITER); // every comma creates a new array item
 
             if (parts.length < EXPECTED_FIELD_COUNT) {
                 System.err.println("Invalid line format (expected " + EXPECTED_FIELD_COUNT + " fields): " + line);
