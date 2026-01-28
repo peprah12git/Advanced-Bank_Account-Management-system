@@ -1,0 +1,2 @@
+ACC001,noah,CUS0,23,0973456789,ho,Regular,500.00,Active,Savings
+ACC002,ama,CUS2,22,0987654321,accra,Premium,200.00,Active,Checking
